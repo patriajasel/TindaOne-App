@@ -10,6 +10,9 @@ class AppThemeConfig {
     // Scaffold default background color for light theme
     scaffoldBackgroundColor: AppColors.lightBackground,
 
+    // Divider Color
+    dividerColor: AppColors.lightSecondary,
+
     // Color scheme for light theme
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.lightPrimary,
@@ -62,6 +65,84 @@ class AppThemeConfig {
           bodyColor: AppColors.lightPrimary,
           displayColor: AppColors.lightPrimary,
         ),
+
+    // TextField/TextFormField theme
+    inputDecorationTheme: InputDecorationTheme(
+      // Border styles
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+        borderSide: BorderSide(color: AppColors.appPrimary),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+        borderSide: BorderSide(color: AppColors.appPrimary, width: 2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+        borderSide: BorderSide(color: AppColors.appPrimary, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+        borderSide: BorderSide(color: AppColors.error, width: 2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+        borderSide: BorderSide(color: AppColors.error, width: 2),
+      ),
+
+      errorStyle: GoogleFonts.poppins(color: AppColors.error, fontSize: 10),
+
+      // Text styles
+      labelStyle: GoogleFonts.poppins(
+        color: AppColors.lightPrimary,
+        fontSize: 12,
+      ),
+
+      hintStyle: GoogleFonts.poppins(
+        color: AppColors.lightPrimary.withValues(alpha: 0.6),
+        fontSize: 12,
+      ),
+
+      // Content padding
+      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+
+      // Icon themes
+      prefixIconColor: AppColors.appSecondary,
+      suffixIconColor: AppColors.appSecondary,
+    ),
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStatePropertyAll(AppColors.appPrimary),
+        foregroundColor: WidgetStatePropertyAll(AppColors.darkPrimary),
+        iconColor: WidgetStatePropertyAll(AppColors.appSecondary),
+        textStyle: WidgetStatePropertyAll(GoogleFonts.poppins(fontSize: 12)),
+        minimumSize: WidgetStatePropertyAll(Size(double.infinity, 40)),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+    ),
 
     // Gradient Theme for light theme
     extensions: [
@@ -131,6 +212,26 @@ class AppThemeConfig {
     // Gradient for dark theme
     extensions: [GradientTheme(primaryGradient: AppColors.darkPrimaryGradient)],
   );
+}
+
+extension TextThemeExtension on BuildContext {
+  TextTheme get textTheme => Theme.of(this).textTheme;
+
+  TextStyle? get titleLarge => textTheme.titleLarge;
+  TextStyle? get titleMedium => textTheme.titleMedium;
+  TextStyle? get titleSmall => textTheme.titleSmall;
+  TextStyle? get headlineLarge => textTheme.headlineLarge;
+  TextStyle? get headlineMedium => textTheme.headlineMedium;
+  TextStyle? get headlineSmall => textTheme.headlineSmall;
+  TextStyle? get displayLarge => textTheme.displayLarge;
+  TextStyle? get displayMedium => textTheme.displayMedium;
+  TextStyle? get displaySmall => textTheme.displaySmall;
+  TextStyle? get bodyLarge => textTheme.bodyLarge;
+  TextStyle? get bodyMedium => textTheme.bodyMedium;
+  TextStyle? get bodySmall => textTheme.bodySmall;
+  TextStyle? get labelLarge => textTheme.labelLarge;
+  TextStyle? get labelMedium => textTheme.labelMedium;
+  TextStyle? get labelSmall => textTheme.labelSmall;
 }
 
 /// Extension for gradient on theme data

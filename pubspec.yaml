@@ -39,6 +39,7 @@ dependencies:
   shared_preferences: ^2.5.3
   google_fonts: ^6.2.1
   go_transitions: ^0.8.1
+  flutter_hooks: ^0.21.2
 
 dev_dependencies:
   flutter_test:
