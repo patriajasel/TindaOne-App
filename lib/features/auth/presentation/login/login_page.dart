@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tinda_one_app/features/auth/presentation/login/validators/login_validators.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
@@ -234,7 +235,9 @@ class LoginPage extends HookWidget {
   /// Build offline mode button
   Widget _buildOfflineModeButton(BuildContext context) {
     return ElevatedButton.icon(
-      onPressed: () {},
+      onPressed: () {
+        context.push('/home-page');
+      },
       icon: Icon(Icons.smartphone),
       label: Text('Use Offline Mode'),
     );
