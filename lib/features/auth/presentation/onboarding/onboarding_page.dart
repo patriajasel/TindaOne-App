@@ -50,7 +50,7 @@ class OnboardingPage extends StatelessWidget {
 
           prefs.setBool('seenOnboarding', true);
           if (context.mounted) {
-            context.go('/home');
+            context.go('/login-page');
           }
         },
         showSkipButton: true,
