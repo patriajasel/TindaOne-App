@@ -4,7 +4,7 @@ class LoginValidators {
 
   // Email validation regex
   static final RegExp _emailRegex = RegExp(
-    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$',
   );
 
   /// Validates email format for login
@@ -13,7 +13,18 @@ class LoginValidators {
       return 'Email is required';
     }
 
-    if (!_emailRegex.hasMatch(value.trim())) {
+    final trimmedValue = value.trim();
+
+    // Additional checks for edge cases
+    if (trimmedValue.startsWith('.') || trimmedValue.endsWith('.')) {
+      return 'Please enter a valid email address';
+    }
+
+    if (trimmedValue.contains('..')) {
+      return 'Please enter a valid email address';
+    }
+
+    if (!_emailRegex.hasMatch(trimmedValue)) {
       return 'Please enter a valid email address';
     }
 

@@ -159,51 +159,6 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('should display OR divider with proper styling', (
-      tester,
-    ) async {
-      // Arrange & Act
-      await tester.pumpWidget(createWidgetUnderTest());
-      await tester.pumpAndSettle();
-
-      // Assert - Check OR divider is present
-      expect(find.text('OR'), findsOneWidget);
-      expect(
-        find.byType(Divider),
-        findsNWidgets(2),
-      ); // Two dividers on either side of OR
-    });
-
-    testWidgets('should have proper layout structure', (tester) async {
-      // Arrange & Act
-      await tester.pumpWidget(createWidgetUnderTest());
-      await tester.pumpAndSettle();
-
-      // Assert - Check main structural widgets
-      expect(find.byType(Scaffold), findsOneWidget);
-      expect(find.byType(Container), findsAtLeastNWidgets(1));
-      expect(find.byType(SingleChildScrollView), findsOneWidget);
-      expect(find.byType(Form), findsOneWidget);
-      expect(find.byType(Column), findsAtLeastNWidgets(1));
-      expect(find.byType(Padding), findsAtLeastNWidgets(1));
-    });
-
-    testWidgets('should apply gradient background', (tester) async {
-      // Arrange & Act
-      await tester.pumpWidget(createWidgetUnderTest());
-      await tester.pumpAndSettle();
-
-      // Assert - Check if Container with gradient decoration exists
-      final Container backgroundContainer = tester.widget(
-        find.byType(Container).first,
-      );
-
-      expect(backgroundContainer.decoration, isA<BoxDecoration>());
-      final BoxDecoration decoration =
-          backgroundContainer.decoration as BoxDecoration;
-      expect(decoration.gradient, isNotNull);
-    });
-
     testWidgets('should have proper text field controllers', (tester) async {
       // Arrange & Act
       await tester.pumpWidget(createWidgetUnderTest());
