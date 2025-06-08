@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tinda_one_app/features/auth/presentation/login/validators/login_validators.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
@@ -61,7 +62,7 @@ class LoginPage extends HookWidget {
 
               _buildForgotPassword(context),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
               _buildLoginButton(context, formKey: formKey),
 
@@ -72,6 +73,10 @@ class LoginPage extends HookWidget {
               const SizedBox(height: 20),
 
               _buildOrDivider(context),
+
+              const SizedBox(height: 20),
+
+              _buildGoogleSignInButton(context),
 
               const SizedBox(height: 20),
 
@@ -214,6 +219,15 @@ class LoginPage extends HookWidget {
           child: Divider(color: Theme.of(context).dividerColor, thickness: 1),
         ),
       ],
+    );
+  }
+
+  /// Builds login button
+  Widget _buildGoogleSignInButton(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () {},
+      icon: Icon(FontAwesomeIcons.google),
+      label: Text('Login via Google'),
     );
   }
 
