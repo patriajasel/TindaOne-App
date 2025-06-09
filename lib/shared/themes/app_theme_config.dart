@@ -13,6 +13,10 @@ class AppThemeConfig {
     // Divider Color
     dividerColor: AppColors.lightSecondary,
 
+    // Primary Utility Colors
+    primaryColorDark: AppColors.darkPrimary,
+    primaryColorLight: AppColors.lightPrimary,
+
     // Color scheme for light theme
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.lightPrimary,
