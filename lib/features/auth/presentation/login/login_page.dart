@@ -236,7 +236,7 @@ class LoginPage extends HookWidget {
   Widget _buildOfflineModeButton(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        context.push('/home-page');
+        context.push('/cashier-page');
       },
       icon: Icon(Icons.smartphone),
       label: Text('Use Offline Mode'),
