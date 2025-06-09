@@ -42,6 +42,8 @@ dependencies:
   flutter_hooks: ^0.21.2
   font_awesome_flutter: ^10.8.0
   curved_navigation_bar: ^1.0.6
+  mockito: ^5.4.6
+  build_runner: ^2.4.15
 
 dev_dependencies:
   flutter_test:
