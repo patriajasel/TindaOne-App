@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 
@@ -28,6 +29,29 @@ class AppThemeConfig {
       brightness: Brightness.light,
     ),
 
+    appBarTheme: AppBarTheme(
+      backgroundColor: AppColors.lightBackground,
+      elevation: 3,
+      scrolledUnderElevation: 3,
+      centerTitle: false,
+      titleTextStyle: GoogleFonts.poppins(
+        fontSize: 28,
+        fontWeight: FontWeight.w600,
+        color: AppColors.appPrimary,
+      ),
+      surfaceTintColor: Colors.transparent,
+      shadowColor: AppColors.darkBackground,
+      iconTheme: IconThemeData(color: AppColors.appSecondary, size: 24),
+      actionsIconTheme: IconThemeData(color: AppColors.appSecondary, size: 24),
+      actionsPadding: const EdgeInsets.symmetric(horizontal: 12),
+      toolbarHeight: 70,
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+    ),
+
     // TextTheme for light theme
     textTheme: GoogleFonts.poppinsTextTheme()
         .copyWith(
@@ -48,7 +72,7 @@ class AppThemeConfig {
             fontWeight: FontWeight.bold,
           ),
           headlineMedium: GoogleFonts.poppins(
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
           headlineSmall: GoogleFonts.poppins(
@@ -135,6 +159,20 @@ class AppThemeConfig {
       suffixIconColor: AppColors.appSecondary,
     ),
 
+    // Card Themes
+    cardTheme: CardThemeData(
+      color: AppColors.appTertiary.withValues(alpha: 0.1),
+      shadowColor: AppColors.lightPrimary.withValues(alpha: 0.2),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: AppColors.lightPrimary.withValues(alpha: 0.1)),
+      ),
+      surfaceTintColor: AppColors.appTertiary.withValues(alpha: 0.3),
+    ),
+
+    // Elevated Button Themes
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(AppColors.appPrimary),
