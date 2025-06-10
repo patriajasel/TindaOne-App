@@ -186,6 +186,33 @@ class AppThemeConfig {
       ),
     ),
 
+    //Modal Bottom Sheet Theme
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: AppColors.lightBackground,
+      elevation: 10,
+      modalElevation: 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+      ),
+    ),
+
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.lightBackground,
+      selectedColor: AppColors.appTertiary,
+      showCheckmark: false,
+      elevation: 2,
+      pressElevation: 4,
+      shadowColor: AppColors.darkBackground.withValues(alpha: 0.3),
+      labelStyle: GoogleFonts.poppins(
+        fontSize: 12,
+        color: AppColors.lightPrimary,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    ),
+
     // Gradient Theme for light theme
     extensions: [
       GradientTheme(primaryGradient: AppColors.lightPrimaryGradient),

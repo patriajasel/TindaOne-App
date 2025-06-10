@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tinda_one_app/features/pages/cashier/add_item_dialog/add_item_dialog.dart';
 import 'package:tinda_one_app/shared/common/product_card.dart';
 
 class CashierPage extends StatelessWidget {
@@ -60,6 +61,29 @@ class CashierPage extends StatelessWidget {
           name: 'Blue Blouse',
           imageUrl: 'https://picsum.photos/200/300',
           sizes: ['S', 'M', 'L', '16', '18', '20'],
+          onPressed: () => showModalBottomSheet(
+            context: context,
+            builder: (context) => AddItemDialog(
+              productId: '1',
+              name: 'Blue Blouse',
+              sizes: [
+                '8',
+                '10',
+                '12',
+                '14',
+                '16',
+                '18',
+                '20',
+                '22',
+                '24',
+                'XS',
+                'S',
+                'M',
+                'L',
+                'XL',
+              ],
+            ),
+          ),
         );
       },
     );
