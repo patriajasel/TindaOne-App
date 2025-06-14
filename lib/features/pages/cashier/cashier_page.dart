@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:tinda_one_app/features/pages/cashier/add_item_dialog/add_item_dialog.dart';
+import 'package:tinda_one_app/features/pages/cashier/create_order/create_order_dialog.dart';
 import 'package:tinda_one_app/shared/common/product_card.dart';
 
 class CashierPage extends StatelessWidget {
@@ -135,7 +136,13 @@ class CashierPage extends StatelessWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined),
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) => CreateOrderDialog(),
+              );
+            },
           ),
           Positioned(
             top: 6,
