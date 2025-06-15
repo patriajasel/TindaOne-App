@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tinda_one_app/features/pages/cashier/inclusion_dialog/inclusion_dialog.dart';
 import 'package:tinda_one_app/shared/common/item_counter.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
@@ -154,7 +155,12 @@ class CreateOrderDialog extends HookWidget {
           Expanded(
             child: Flexible(
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => InclusionDialog(),
+                  );
+                },
                 icon: Icon(Icons.add),
                 label: Text('Add Item'),
               ),
