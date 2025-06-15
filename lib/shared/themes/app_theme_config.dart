@@ -199,6 +199,16 @@ class AppThemeConfig {
       ),
     ),
 
+    // Dialog Theme
+    dialogTheme: DialogThemeData(
+      backgroundColor: AppColors.lightBackground,
+      elevation: 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      insetPadding: EdgeInsets.symmetric(horizontal: 20),
+    ),
+
     chipTheme: ChipThemeData(
       backgroundColor: AppColors.lightBackground,
       selectedColor: AppColors.appTertiary,
