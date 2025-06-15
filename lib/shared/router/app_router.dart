@@ -4,6 +4,7 @@ import 'package:tinda_one_app/features/auth/presentation/login/login_page.dart';
 import 'package:tinda_one_app/features/auth/presentation/onboarding/onboarding_page.dart';
 import 'package:tinda_one_app/features/pages/analytics/analytics_page.dart';
 import 'package:tinda_one_app/features/pages/cashier/cashier_page.dart';
+import 'package:tinda_one_app/features/pages/cashier/checkout_page/checkout_page.dart';
 import 'package:tinda_one_app/features/pages/home_page.dart';
 import 'package:tinda_one_app/features/pages/inventory/inventory_page.dart';
 import 'package:tinda_one_app/features/pages/scanner/scanner_page.dart';
@@ -110,6 +111,16 @@ class AppRouter {
               ],
             ),
           ],
+        ),
+
+        // Route for Checkout Page
+        GoRoute(
+          path: '/checkout-page',
+          name: 'Checkout Page',
+          pageBuilder: GoTransitions.zoom.call,
+          builder: (context, state) {
+            return CheckoutPage();
+          },
         ),
       ],
     );

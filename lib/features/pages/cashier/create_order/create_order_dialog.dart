@@ -240,7 +240,7 @@ class CreateOrderDialog extends HookWidget {
             child: ElevatedButton.icon(
               icon: Icon(Icons.shopping_cart_checkout),
               onPressed: () {
-                context.pop();
+                context.push('/checkout-page');
               },
               label: Text('Go to Checkout'),
             ),
