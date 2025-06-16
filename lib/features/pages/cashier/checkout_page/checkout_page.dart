@@ -8,7 +8,7 @@ class CheckoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Checkout ')),
+      appBar: AppBar(title: const Text('Checkout')),
       body: SingleChildScrollView(child: _buildMainContent(context)),
     );
   }

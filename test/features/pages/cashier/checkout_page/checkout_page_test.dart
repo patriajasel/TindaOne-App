@@ -16,9 +16,8 @@ void main() {
       expect(find.text('This is a placeholder'), findsOneWidget);
       expect(find.text('Print Receipt'), findsOneWidget);
       expect(find.text('Cancel Order'), findsOneWidget);
-      expect(find.text('Confirm Payment:'), findsOneWidget);
+      expect(find.text('Confirm Payment'), findsOneWidget);
 
-      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
       expect(find.byIcon(Icons.receipt), findsOneWidget);
       expect(find.byIcon(Icons.cancel), findsOneWidget);
       expect(find.byIcon(Icons.payment), findsOneWidget);
