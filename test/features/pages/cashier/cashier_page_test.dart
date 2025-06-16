@@ -61,5 +61,33 @@ void main() {
 
       expect(find.text('Product Name'), findsOneWidget);
     });
+
+    testWidgets('should display dialog when cart button is clicked', (
+      tester,
+    ) async {
+      // Arrange
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
+
+      final cartButton = find.byIcon(Icons.inventory_2_outlined);
+      await tester.tap(cartButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsOneWidget);
+    });
+
+    testWidgets('should display dialog when product card is clicked', (
+      tester,
+    ) async {
+      // Arrange
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
+
+      final productCard = find.byType(ProductCard).first;
+      await tester.tap(productCard);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAtLeastNWidgets(1));
+    });
   });
 }
