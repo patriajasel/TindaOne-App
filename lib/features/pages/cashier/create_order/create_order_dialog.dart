@@ -153,17 +153,15 @@ class CreateOrderDialog extends HookWidget {
             child: Text('Inclusions:', style: context.textTheme.displaySmall),
           ),
           Expanded(
-            child: Flexible(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => InclusionDialog(),
-                  );
-                },
-                icon: Icon(Icons.add),
-                label: Text('Add Item'),
-              ),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => InclusionDialog(),
+                );
+              },
+              icon: Icon(Icons.add),
+              label: Text('Add Item'),
             ),
           ),
         ],
