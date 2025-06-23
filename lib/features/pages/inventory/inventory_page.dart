@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tinda_one_app/features/pages/inventory/add_product_dialog/add_product_dialog.dart';
 import 'package:tinda_one_app/shared/common/product_card.dart';
 
 class InventoryPage extends StatelessWidget {
@@ -92,7 +93,16 @@ class InventoryPage extends StatelessWidget {
         color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: IconButton(icon: const Icon(Icons.add), onPressed: () {}),
+      child: IconButton(
+        icon: const Icon(Icons.add),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => AddProductDialog(),
+          );
+        },
+      ),
     );
   }
 

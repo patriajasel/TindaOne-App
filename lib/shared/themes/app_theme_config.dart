@@ -223,6 +223,11 @@ class AppThemeConfig {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     ),
 
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStatePropertyAll(AppColors.appSecondary),
+      
+    ),
+
     // Gradient Theme for light theme
     extensions: [
       GradientTheme(primaryGradient: AppColors.lightPrimaryGradient),
