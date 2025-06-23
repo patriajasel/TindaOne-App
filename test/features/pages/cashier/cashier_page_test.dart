@@ -21,7 +21,7 @@ void main() {
       expect(find.byIcon(Icons.shopping_cart_outlined), findsOneWidget);
       expect(find.byIcon(Icons.inventory_2_outlined), findsOneWidget);
       expect(find.byType(SearchField), findsOneWidget);
-      expect(find.byType(ProductCard), findsAny);
+      expect(find.byType(ItemCard), findsAny);
     });
 
     testWidgets('should have clickable product card', (tester) async {
@@ -29,7 +29,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
-      final productCard = find.byType(ProductCard).first;
+      final productCard = find.byType(ItemCard).first;
 
       // Assert
       await tester.tap(productCard);
@@ -83,7 +83,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
-      final productCard = find.byType(ProductCard).first;
+      final productCard = find.byType(ItemCard).first;
       await tester.tap(productCard);
       await tester.pumpAndSettle();
 

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tinda_one_app/shared/common/item_card.dart';
 
 void main() {
-  group('ProductCard Widget Tests', () {
+  group('ItemCard Widget Tests', () {
     const String testProductId = 'test-product-123';
     const String testName = 'Test Product';
     const String testImageUrl = 'https://example.com/test-image.jpg';
@@ -16,7 +16,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ProductCard(
+            body: ItemCard(
               productId: testProductId,
               name: testName,
               imageUrl: testImageUrl,
@@ -48,7 +48,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ProductCard(
+            body: ItemCard(
               productId: testProductId,
               name: testName,
               imageUrl: testImageUrl,
@@ -73,7 +73,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ProductCard(
+            body: ItemCard(
               productId: testProductId,
               name: testName,
               imageUrl: testImageUrl,
@@ -88,7 +88,7 @@ void main() {
       await tester.pump();
 
       // If we reach here, the test passes (no crash occurred)
-      expect(find.byType(ProductCard), findsOneWidget);
+      expect(find.byType(ItemCard), findsOneWidget);
     });
 
     testWidgets('should handle single size', (WidgetTester tester) async {
@@ -96,7 +96,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ProductCard(
+            body: ItemCard(
               productId: testProductId,
               name: testName,
               imageUrl: testImageUrl,
@@ -123,7 +123,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ProductCard(
+            body: ItemCard(
               productId: testProductId,
               name: longName,
               imageUrl: testImageUrl,
@@ -135,7 +135,7 @@ void main() {
 
       // Assert
       expect(find.text(longName), findsOneWidget);
-      expect(find.byType(ProductCard), findsOneWidget);
+      expect(find.byType(ItemCard), findsOneWidget);
     });
 
     testWidgets('should handle many sizes with horizontal scroll', (
@@ -159,7 +159,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ProductCard(
+            body: ItemCard(
               productId: testProductId,
               name: testName,
               imageUrl: testImageUrl,
@@ -182,7 +182,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ProductCard(
+            body: ItemCard(
               productId: testProductId,
               name: testName,
               imageUrl: 'invalid-url',
