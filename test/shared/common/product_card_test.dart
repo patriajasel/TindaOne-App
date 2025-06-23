@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tinda_one_app/shared/common/product_card.dart';
+import 'package:tinda_one_app/shared/common/item_card.dart';
 
 void main() {
   group('ProductCard Widget Tests', () {

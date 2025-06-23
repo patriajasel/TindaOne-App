@@ -1,104 +1,217 @@
 import 'package:flutter/material.dart';
+import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
 class ProductCard extends StatelessWidget {
   final String productId;
   final String name;
-  final String imageUrl;
+  final String photo;
   final List<String> sizes;
-  final VoidCallback? onPressed;
+  final int supply;
+  final VoidCallback? onTap;
+  final VoidCallback? onSizesTap;
 
   const ProductCard({
     super.key,
     required this.productId,
     required this.name,
-    required this.imageUrl,
+    required this.photo,
     required this.sizes,
-    this.onPressed,
+    required this.supply,
+    this.onTap,
+    this.onSizesTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 3,
-        child: Container(
-          height: 130,
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildImageContainer(),
-              const SizedBox(width: 16),
-              Expanded(child: _buildProductDetails(context)),
-            ],
-          ),
+    return Card(
+      margin: const EdgeInsets.all(10),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildProductImage(context),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProductName(context),
+                    const Spacer(),
+                    _buildStockInfo(context),
+                    const SizedBox(height: 12),
+                    _buildActionButton(context),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildImageContainer() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.network(
-        imageUrl,
-        height: 100,
-        width: 80,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          color: Colors.grey.shade300,
-          height: 100,
-          width: 80,
-          child: const Icon(Icons.broken_image),
+  Widget _buildProductImage(BuildContext context) {
+    return Container(
+      height: 120,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
         ),
+        color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.3),
       ),
-    );
-  }
-
-  Widget _buildProductDetails(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          name,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
         ),
-        const SizedBox(height: 8),
-        Text('Sizes Available:', style: Theme.of(context).textTheme.labelSmall),
-        const SizedBox(height: 6),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: sizes
-                .map(
-                  (size) => Container(
-                    margin: const EdgeInsets.only(right: 5),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade400),
-                      borderRadius: BorderRadius.circular(6),
-                      color: Colors.grey.shade100,
-                    ),
-                    child: Text(
-                      size,
-                      style: Theme.of(context).textTheme.bodySmall,
+        child: Stack(
+          children: [
+            Image.network(
+              photo,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.image_not_supported_outlined,
+                        size: 32,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Image not available',
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            if (supply == 0)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
                     ),
                   ),
-                )
-                .toList(),
-          ),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        'OUT OF STOCK',
+                        style: context.textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductName(BuildContext context) {
+    return Text(
+      name,
+      style: context.textTheme.titleSmall,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildStockInfo(BuildContext context) {
+    Color stockColor;
+    String stockText;
+    IconData stockIcon;
+
+    if (supply == 0) {
+      stockColor = Theme.of(context).colorScheme.error;
+      stockText = 'Out of Stock';
+      stockIcon = Icons.remove_circle_outline;
+    } else if (supply <= 5) {
+      stockColor = Theme.of(context).colorScheme.secondary;
+      stockText = 'Low Stock ($supply left)';
+      stockIcon = Icons.warning_amber_outlined;
+    } else {
+      stockColor = Theme.of(context).colorScheme.primary;
+      stockText = 'In Stock ($supply available)';
+      stockIcon = Icons.check_circle_outline;
+    }
+
+    return Row(
+      children: [
+        Icon(stockIcon, size: 16, color: stockColor),
+        const SizedBox(width: 4),
+        Text(
+          stockText,
+          style: context.textTheme.bodySmall?.copyWith(color: stockColor),
         ),
       ],
+    );
+  }
+
+  Widget _buildActionButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: supply == 0
+          ? OutlinedButton.icon(
+              onPressed: null,
+              icon: const Icon(Icons.notifications_outlined, size: 16),
+              label: const Text('Notify When Available'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            )
+          : ElevatedButton.icon(
+              onPressed: onSizesTap,
+              icon: const Icon(Icons.straighten, size: 16),
+              label: const Text('View Sizes'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
     );
   }
 }
