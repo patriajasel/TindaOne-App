@@ -17,7 +17,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert
-      final productCard = find.byType(ProductCard).first;
+      final productCard = find.byType(ItemCard).first;
 
       // Act
       await tester.tap(productCard);
@@ -80,7 +80,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert
-      final productCard = find.byType(ProductCard).first;
+      final productCard = find.byType(ItemCard).first;
 
       // Act
       await tester.tap(productCard);
@@ -103,7 +103,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert
-      final productCard = find.byType(ProductCard).first;
+      final productCard = find.byType(ItemCard).first;
 
       // Act
       await tester.tap(productCard);
@@ -138,7 +138,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert
-      final productCard = find.byType(ProductCard).first;
+      final productCard = find.byType(ItemCard).first;
 
       // Act
       await tester.tap(productCard);
