@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,8 +6,13 @@ import 'package:searchfield/searchfield.dart';
 import 'package:tinda_one_app/features/pages/inventory/inventory_page.dart';
 import 'package:tinda_one_app/shared/common/product_card.dart';
 
+import '../../../helpers/mock_http.dart';
+
 void main() {
-  setUpAll(() => HttpOverrides.global = _MockHttpOverrides());
+  setUpAll(() {
+    return HttpOverrides.global = MockHttpOverrides();
+  });
+
   group('Inventory Page Widget Tests', () {
     Widget createWidgetUnderTest() {
       return MaterialApp(home: InventoryPage());
@@ -80,82 +84,4 @@ void main() {
       expect(find.byType(ModalBarrier), findsAtLeastNWidgets(1));
     });
   });
-}
-
-class _MockHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return _MockHttpClient();
-  }
-}
-
-class _MockHttpClient extends Fake implements HttpClient {
-  @override
-  bool autoUncompress = true;
-
-  @override
-  Future<HttpClientRequest> getUrl(Uri url) async {
-    return _MockHttpClientRequest();
-  }
-}
-
-class _MockHttpClientRequest extends Fake implements HttpClientRequest {
-  @override
-  Future<HttpClientResponse> close() async {
-    return _MockHttpClientResponse();
-  }
-}
-
-class _MockHttpClientResponse extends Fake implements HttpClientResponse {
-  final List<int> _fakePngData = <int>[
-    0x89, 0x50, 0x4E, 0x47, // PNG signature
-    0x0D, 0x0A, 0x1A, 0x0A,
-    0x00, 0x00, 0x00, 0x0D,
-    0x49, 0x48, 0x44, 0x52,
-    0x00, 0x00, 0x00, 0x01, // Width: 1px
-    0x00, 0x00, 0x00, 0x01, // Height: 1px
-    0x08, 0x06, 0x00, 0x00,
-    0x00, 0x1F, 0x15, 0xC4,
-    0x89, // CRC dummy
-  ];
-
-  @override
-  int get statusCode => 200;
-
-  @override
-  int get contentLength => _fakePngData.length;
-
-  @override
-  StreamSubscription<List<int>> listen(
-    void Function(List<int>)? onData, {
-    Function? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) {
-    final controller = StreamController<List<int>>();
-
-    // Add data and close immediately (simulate image loading)
-    controller.add(_fakePngData);
-    controller.close();
-
-    return controller.stream.listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
-  }
-
-  // Optional: if you encounter more errors
-  @override
-  HttpClientResponseCompressionState get compressionState =>
-      HttpClientResponseCompressionState.notCompressed;
-
-  @override
-  HttpHeaders get headers => _MockHttpHeaders();
-}
-
-class _MockHttpHeaders extends Fake implements HttpHeaders {
-  @override
-  List<String>? operator [](String name) => <String>[];
 }
