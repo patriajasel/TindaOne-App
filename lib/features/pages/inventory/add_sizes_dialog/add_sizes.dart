@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
-class AddSizes extends HookWidget {
-  const AddSizes({super.key});
+class AddSizesDialog extends HookWidget {
+  const AddSizesDialog({super.key});
 
   @override
   Widget build(BuildContext context) {

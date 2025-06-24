@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:tinda_one_app/features/pages/inventory/add_product_dialog/add_product_dialog.dart';
+import 'package:tinda_one_app/features/pages/inventory/view_product_dialog/view_product_dialog.dart';
 import 'package:tinda_one_app/shared/common/product_card.dart';
 
 class InventoryPage extends StatelessWidget {
@@ -119,8 +120,12 @@ class InventoryPage extends StatelessWidget {
         photo: 'https://picsum.photos/200/300',
         sizes: ['S', 'M', 'L'],
         supply: 1,
-        onSizesTap: () {},
-        onTap: () {},
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) => ViewProductDialog(),
+          );
+        },
       ),
     );
   }

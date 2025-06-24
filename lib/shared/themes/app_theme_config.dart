@@ -225,7 +225,12 @@ class AppThemeConfig {
 
     radioTheme: RadioThemeData(
       fillColor: WidgetStatePropertyAll(AppColors.appSecondary),
-      
+    ),
+
+    iconButtonTheme: IconButtonThemeData(
+      style: ButtonStyle(
+        iconColor: WidgetStatePropertyAll(AppColors.appSecondary),
+      ),
     ),
 
     // Gradient Theme for light theme
