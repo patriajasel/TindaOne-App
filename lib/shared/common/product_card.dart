@@ -8,7 +8,6 @@ class ProductCard extends StatelessWidget {
   final List<String> sizes;
   final int supply;
   final VoidCallback? onTap;
-  final VoidCallback? onSizesTap;
 
   const ProductCard({
     super.key,
@@ -18,7 +17,6 @@ class ProductCard extends StatelessWidget {
     required this.sizes,
     required this.supply,
     this.onTap,
-    this.onSizesTap,
   });
 
   @override
@@ -42,7 +40,6 @@ class ProductCard extends StatelessWidget {
                     const Spacer(),
                     _buildStockInfo(context),
                     const SizedBox(height: 12),
-                    _buildActionButton(context),
                   ],
                 ),
               ),
@@ -55,7 +52,7 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildProductImage(BuildContext context) {
     return Container(
-      height: 120,
+      height: 150,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(12),
@@ -183,35 +180,6 @@ class ProductCard extends StatelessWidget {
           style: context.textTheme.bodySmall?.copyWith(color: stockColor),
         ),
       ],
-    );
-  }
-
-  Widget _buildActionButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: supply == 0
-          ? OutlinedButton.icon(
-              onPressed: null,
-              icon: const Icon(Icons.notifications_outlined, size: 16),
-              label: const Text('Notify When Available'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            )
-          : ElevatedButton.icon(
-              onPressed: onSizesTap,
-              icon: const Icon(Icons.straighten, size: 16),
-              label: const Text('View Sizes'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
     );
   }
 }

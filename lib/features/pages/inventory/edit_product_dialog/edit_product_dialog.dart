@@ -6,8 +6,8 @@ import 'package:tinda_one_app/features/pages/inventory/add_sizes_dialog/add_size
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
-class AddProductDialog extends HookWidget {
-  const AddProductDialog({super.key});
+class EditProductDialog extends HookWidget {
+  const EditProductDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +56,10 @@ class AddProductDialog extends HookWidget {
       color: AppColors.appTertiary.withValues(alpha: 0.2),
       child: Row(
         children: [
-          Icon(Icons.add, color: AppColors.appSecondary),
+          Icon(Icons.edit, color: AppColors.appSecondary),
           const SizedBox(width: 10),
           Text(
-            'Add Product',
+            'Edit Product',
             style: Theme.of(
               context,
             ).textTheme.titleMedium!.copyWith(color: AppColors.appPrimary),
@@ -336,11 +336,11 @@ class AddProductDialog extends HookWidget {
         const SizedBox(width: 10),
         Expanded(
           child: ElevatedButton.icon(
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.save),
             onPressed: () {
               context.pop();
             },
-            label: Text('Add Product'),
+            label: Text('Save'),
           ),
         ),
       ],
