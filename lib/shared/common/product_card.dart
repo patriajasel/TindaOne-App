@@ -99,7 +99,7 @@ class ProductCard extends StatelessWidget {
                         'Image not available',
                         style: context.textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                        ),  
                       ),
                     ],
                   ),

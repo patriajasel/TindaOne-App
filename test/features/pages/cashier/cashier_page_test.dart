@@ -24,7 +24,7 @@ void main() {
       expect(find.byType(ItemCard), findsAny);
     });
 
-    testWidgets('should have clickable product card', (tester) async {
+    testWidgets('should have clickable item card', (tester) async {
       // Arrange
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
