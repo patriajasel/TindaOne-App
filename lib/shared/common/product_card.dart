@@ -99,7 +99,7 @@ class ProductCard extends StatelessWidget {
                         'Image not available',
                         style: context.textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                        ),  
                       ),
                     ],
                   ),
@@ -161,7 +161,7 @@ class ProductCard extends StatelessWidget {
       stockColor = Theme.of(context).colorScheme.error;
       stockText = 'Out of Stock';
       stockIcon = Icons.remove_circle_outline;
-    } else if (supply <= 5) {
+    } else if (supply <= 10) {
       stockColor = Theme.of(context).colorScheme.secondary;
       stockText = 'Low Stock ($supply left)';
       stockIcon = Icons.warning_amber_outlined;
