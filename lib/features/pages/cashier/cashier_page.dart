@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:tinda_one_app/features/pages/cashier/add_item_dialog/add_item_dialog.dart';
 import 'package:tinda_one_app/features/pages/cashier/create_order/create_order_dialog.dart';
-import 'package:tinda_one_app/shared/common/product_card.dart';
+import 'package:tinda_one_app/shared/common/item_card.dart';
 
 class CashierPage extends StatelessWidget {
   const CashierPage({super.key});
@@ -57,7 +57,7 @@ class CashierPage extends StatelessWidget {
     return ListView.builder(
       itemCount: 10,
       itemBuilder: (context, index) {
-        return ProductCard(
+        return ItemCard(
           productId: '1',
           name: 'Blue Blouse',
           imageUrl: 'https://picsum.photos/200/300',
