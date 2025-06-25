@@ -159,5 +159,25 @@ void main() {
         await tester.ensureVisible(find.text('Add Sizes'));
       },
     );
+
+    testWidgets('should allow show dialog when add size button is clicked', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createWidgetUnderTests());
+
+      await tester.tap(find.byIcon(Icons.add).first);
+      await tester.pumpAndSettle();
+
+      final priceBySize = find.text('Price by Size');
+
+      await tester.tap(priceBySize);
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Add Sizes'));
+      await tester.tap(find.text('Add Sizes'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Dialog), findsOneWidget);
+    });
   });
 }
