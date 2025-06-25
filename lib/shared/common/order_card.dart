@@ -6,11 +6,13 @@ class OrderCard extends StatelessWidget {
   final String orderId;
   final int amount;
   final DateTime orderDate;
+  final VoidCallback? onViewItems;
   const OrderCard({
     super.key,
     required this.orderId,
     required this.amount,
     required this.orderDate,
+    this.onViewItems,
   });
 
   @override
@@ -56,7 +58,7 @@ class OrderCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 40),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: onViewItems,
                       child: Text('View Items'),
                     ),
                   ),
