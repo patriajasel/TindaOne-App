@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
-import 'package:tinda_one_app/features/pages/transactions/view_order_details/view_order_details.dart';
+import 'package:tinda_one_app/features/pages/transactions/view_order_details_dialog/view_order_details_dialog.dart';
 import 'package:tinda_one_app/shared/common/order_card.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 
@@ -97,7 +97,7 @@ class TransactionPage extends StatelessWidget {
           orderDate: DateTime.now(),
           onViewItems: () => showModalBottomSheet(
             context: context,
-            builder: (context) => ViewOrderDetails(),
+            builder: (context) => ViewOrderDetailsDialog(),
           ),
         );
       },

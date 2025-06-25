@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tinda_one_app/features/pages/transactions/replace_item_dialog/replace_item_dialog.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
-class ViewOrderDetails extends StatelessWidget {
-  const ViewOrderDetails({super.key});
+class ViewOrderDetailsDialog extends StatelessWidget {
+  const ViewOrderDetailsDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +97,10 @@ class ViewOrderDetails extends StatelessWidget {
                       children: [
                         Expanded(
                           child: IconButton(
-                            onPressed: () {},
+                            onPressed: () => showDialog(
+                              context: context,
+                              builder: (context) => ReplaceItemDialog(),
+                            ),
                             icon: Icon(Icons.change_circle),
                           ),
                         ),
