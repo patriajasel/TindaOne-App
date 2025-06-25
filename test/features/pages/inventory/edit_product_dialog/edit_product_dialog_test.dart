@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tinda_one_app/features/pages/inventory/inventory_page.dart';
+import 'package:tinda_one_app/shared/common/product_card.dart';
 
 import '../../../../helpers/mock_http.dart';
 
@@ -12,7 +13,7 @@ void main() {
     return HttpOverrides.global = MockHttpOverrides();
   });
 
-  group('Add Product Dialog Widget Tests', () {
+  group('Edit Product Dialog Widget Tests', () {
     Widget createWidgetUnderTests() {
       return MaterialApp(home: InventoryPage());
     }
@@ -21,14 +22,21 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTests());
       await tester.pumpAndSettle();
 
-      final addButton = find.byIcon(Icons.add).first;
+      final productCard = find.byType(ProductCard).first;
 
-      await tester.tap(addButton);
+      await tester.tap(productCard);
       await tester.pumpAndSettle();
 
       expect(find.byType(ModalBarrier), findsAny);
 
-      expect(find.text('Add Product'), findsAtLeastNWidgets(2));
+      final editButton = find.byIcon(Icons.edit);
+
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
+
+      expect(find.text('Edit Product'), findsOneWidget);
       expect(find.text('Upload Photo'), findsOneWidget);
       expect(find.text('Remove Photo'), findsOneWidget);
       expect(find.text('Generate Bar Code'), findsOneWidget);
@@ -42,16 +50,18 @@ void main() {
         find.text('Do you want to include this product as an inclusion?'),
         findsOneWidget,
       );
-      expect(find.text('Yes'), findsOneWidget);
-      expect(find.text('No'), findsOneWidget);
+      expect(find.text('Yes'), findsAtLeastNWidgets(2));
+      expect(find.text('No'), findsAtLeastNWidgets(2));
       expect(find.text('Cancel'), findsOneWidget);
+      expect(find.text('Save'), findsOneWidget);
 
-      expect(find.byIcon(Icons.add), findsAny);
+      expect(find.byIcon(Icons.edit), findsAny);
       expect(find.byIcon(Icons.close), findsOneWidget);
       expect(find.byIcon(Icons.cancel), findsOneWidget);
       expect(find.byIcon(Icons.title), findsOneWidget);
       expect(find.byIcon(Icons.inventory), findsOneWidget);
       expect(find.byIcon(FontAwesomeIcons.pesoSign), findsOneWidget);
+      expect(find.byIcon(Icons.save), findsOneWidget);
 
       expect(find.byType(TextFormField), findsAtLeastNWidgets(3));
       expect(find.byType(RadioListTile<String>), findsAtLeastNWidgets(2));
@@ -62,10 +72,19 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTests());
       await tester.pumpAndSettle();
 
-      final addButton = find.byIcon(Icons.add).first;
+      final productCard = find.byType(ProductCard).first;
 
-      await tester.tap(addButton);
+      await tester.tap(productCard);
       await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
+
+      final editButton = find.byIcon(Icons.edit);
+
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
 
       final uploadButton = tester.widget(
         find.text('Upload Photo').hitTestable(),
@@ -86,10 +105,8 @@ void main() {
       final cancelButton = tester.widget(find.text('Cancel').hitTestable());
       expect(cancelButton, isNotNull);
 
-      await tester.ensureVisible(find.text('Add Product').last);
-      final addProductButton = tester.widget(
-        find.text('Add Product').last.hitTestable(),
-      );
+      await tester.ensureVisible(find.text('Save'));
+      final addProductButton = tester.widget(find.text('Save').hitTestable());
       expect(addProductButton, isNotNull);
     });
 
@@ -97,10 +114,19 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTests());
       await tester.pumpAndSettle();
 
-      final addButton = find.byIcon(Icons.add).first;
+      final productCard = find.byType(ProductCard).first;
 
-      await tester.tap(addButton);
+      await tester.tap(productCard);
       await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
+
+      final editButton = find.byIcon(Icons.edit);
+
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
 
       final fixedPriceRadio = tester.widget(
         find.byType(RadioListTile<String>).first.hitTestable(),
@@ -112,9 +138,9 @@ void main() {
       );
       expect(bySizeRadio, isNotNull);
 
-      await tester.ensureVisible(find.byType(RadioListTile<bool>).first);
+      await tester.ensureVisible(find.byType(RadioListTile<bool>).at(2));
       final yesRadio = tester.widget(
-        find.byType(RadioListTile<bool>).first.hitTestable(),
+        find.byType(RadioListTile<bool>).at(2).hitTestable(),
       );
       expect(yesRadio, isNotNull);
 
@@ -127,15 +153,27 @@ void main() {
 
     testWidgets('should allow text input on all text fields', (tester) async {
       await tester.pumpWidget(createWidgetUnderTests());
-
-      await tester.tap(find.byIcon(Icons.add).first);
       await tester.pumpAndSettle();
+
+      final productCard = find.byType(ProductCard).first;
+
+      await tester.tap(productCard);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
+
+      final editButton = find.byIcon(Icons.edit);
+
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
 
       await tester.enterText(find.byType(TextField).at(0), 'Test Product Name');
       expect(find.text('Test Product Name'), findsOneWidget);
 
-      await tester.enterText(find.byType(TextField).at(1), '100');
-      expect(find.text('100'), findsOneWidget);
+      await tester.enterText(find.byType(TextField).at(1), '300');
+      expect(find.text('300'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField).last, '200');
       expect(find.text('200'), findsOneWidget);
@@ -147,9 +185,21 @@ void main() {
       'should allow show add size button when price by size is selected',
       (tester) async {
         await tester.pumpWidget(createWidgetUnderTests());
-
-        await tester.tap(find.byIcon(Icons.add).first);
         await tester.pumpAndSettle();
+
+        final productCard = find.byType(ProductCard).first;
+
+        await tester.tap(productCard);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ModalBarrier), findsAny);
+
+        final editButton = find.byIcon(Icons.edit);
+
+        await tester.tap(editButton);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ModalBarrier), findsAny);
 
         final priceBySize = find.text('Price by Size');
 
@@ -164,9 +214,21 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(createWidgetUnderTests());
-
-      await tester.tap(find.byIcon(Icons.add).first);
       await tester.pumpAndSettle();
+
+      final productCard = find.byType(ProductCard).first;
+
+      await tester.tap(productCard);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
+
+      final editButton = find.byIcon(Icons.edit);
+
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ModalBarrier), findsAny);
 
       final priceBySize = find.text('Price by Size');
 
