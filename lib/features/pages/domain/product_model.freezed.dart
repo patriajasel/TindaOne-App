@@ -249,11 +249,11 @@ class _$ProductModelImpl implements _ProductModel {
       required this.image,
       required this.isInclusion,
       required this.priceType,
-      this.productSizes = null,
-      this.price = null,
-      this.supply = null,
-      this.size = null,
-      this.barCode = null});
+      this.productSizes,
+      this.price,
+      this.supply,
+      this.size,
+      this.barCode});
 
   factory _$ProductModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductModelImplFromJson(json);
@@ -269,19 +269,14 @@ class _$ProductModelImpl implements _ProductModel {
   @override
   final String priceType;
   @override
-  @JsonKey()
   final ProductSizes? productSizes;
   @override
-  @JsonKey()
   final int? price;
   @override
-  @JsonKey()
   final int? supply;
   @override
-  @JsonKey()
   final String? size;
   @override
-  @JsonKey()
   final String? barCode;
 
   @override
@@ -504,7 +499,7 @@ class _$ProductSizesImpl implements _ProductSizes {
       {required this.size,
       required this.price,
       required this.supply,
-      this.barCode = null});
+      this.barCode});
 
   factory _$ProductSizesImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductSizesImplFromJson(json);
@@ -516,7 +511,6 @@ class _$ProductSizesImpl implements _ProductSizes {
   @override
   final int supply;
   @override
-  @JsonKey()
   final String? barCode;
 
   @override

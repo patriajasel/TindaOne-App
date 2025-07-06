@@ -122,10 +122,10 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       productSizes: json['productSizes'] == null
           ? null
           : ProductSizes.fromJson(json['productSizes'] as Map<String, dynamic>),
-      price: (json['price'] as num?)?.toInt() ?? null,
-      supply: (json['supply'] as num?)?.toInt() ?? null,
-      size: json['size'] as String? ?? null,
-      barCode: json['barCode'] as String? ?? null,
+      price: (json['price'] as num?)?.toInt(),
+      supply: (json['supply'] as num?)?.toInt(),
+      size: json['size'] as String?,
+      barCode: json['barCode'] as String?,
     );
 
 Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
@@ -147,7 +147,7 @@ _$ProductSizesImpl _$$ProductSizesImplFromJson(Map<String, dynamic> json) =>
       size: json['size'] as String,
       price: (json['price'] as num).toInt(),
       supply: (json['supply'] as num).toInt(),
-      barCode: json['barCode'] as String? ?? null,
+      barCode: json['barCode'] as String?,
     );
 
 Map<String, dynamic> _$$ProductSizesImplToJson(_$ProductSizesImpl instance) =>

@@ -13,11 +13,11 @@ class ProductModel with _$ProductModel {
     required String image,
     required bool isInclusion,
     required String priceType,
-    @Default(null) ProductSizes? productSizes,
-    @Default(null) int? price,
-    @Default(null) int? supply,
-    @Default(null) String? size,
-    @Default(null) String? barCode,
+    ProductSizes? productSizes,
+    int? price,
+    int? supply,
+    String? size,
+    String? barCode,
   }) = _ProductModel;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) =>
@@ -30,7 +30,7 @@ class ProductSizes with _$ProductSizes {
     required String size,
     required int price,
     required int supply,
-    @Default(null) String? barCode,
+    String? barCode,
   }) = _ProductSizes;
 
   factory ProductSizes.fromJson(Map<String, dynamic> json) =>
