@@ -2,13 +2,13 @@ import 'package:go_router/go_router.dart';
 import 'package:go_transitions/go_transitions.dart';
 import 'package:tinda_one_app/features/auth/presentation/login/login_page.dart';
 import 'package:tinda_one_app/features/auth/presentation/onboarding/onboarding_page.dart';
-import 'package:tinda_one_app/features/pages/analytics/analytics_page.dart';
-import 'package:tinda_one_app/features/pages/cashier/cashier_page.dart';
-import 'package:tinda_one_app/features/pages/cashier/checkout_page/checkout_page.dart';
-import 'package:tinda_one_app/features/pages/home_page.dart';
-import 'package:tinda_one_app/features/pages/inventory/inventory_page.dart';
-import 'package:tinda_one_app/features/pages/scanner/scanner_page.dart';
-import 'package:tinda_one_app/features/pages/transactions/transaction_page.dart';
+import 'package:tinda_one_app/features/pages/presentation/analytics/analytics_page.dart';
+import 'package:tinda_one_app/features/pages/presentation/cashier/cashier_page.dart';
+import 'package:tinda_one_app/features/pages/presentation/cashier/checkout_page/checkout_page.dart';
+import 'package:tinda_one_app/features/pages/presentation/home_page.dart';
+import 'package:tinda_one_app/features/pages/presentation/inventory/inventory_page.dart';
+import 'package:tinda_one_app/features/pages/presentation/scanner/scanner_page.dart';
+import 'package:tinda_one_app/features/pages/presentation/transactions/transaction_page.dart';
 
 class AppRouter {
   static GoRouter router(bool showOnboarding) {
