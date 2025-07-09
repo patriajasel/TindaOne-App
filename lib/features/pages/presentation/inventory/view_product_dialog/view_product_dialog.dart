@@ -3,21 +3,53 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:tinda_one_app/features/pages/application/product_providers.dart';
 import 'package:tinda_one_app/features/pages/domain/product_model.dart';
 import 'package:tinda_one_app/features/pages/presentation/inventory/edit_product_dialog/edit_product_dialog.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
-class ViewProductDialog extends StatelessWidget {
+class ViewProductDialog extends ConsumerWidget {
   final ProductModel product;
   const ViewProductDialog({super.key, required this.product});
 
+  Future<void> _deleteProduct(BuildContext context, WidgetRef ref) async {
+    try {
+      await ref.read(
+        deleteProductProvider(productId: product.productId).future,
+      );
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Product was deleted successfully'),
+            backgroundColor: AppColors.appTertiary,
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        context.pop();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete product: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          _buildDialogHeader(context),
+          _buildDialogHeader(context, ref),
           const SizedBox(height: 20),
           _buildProductImage(context),
           const SizedBox(height: 20),
@@ -30,7 +62,7 @@ class ViewProductDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildDialogHeader(BuildContext context) {
+  Widget _buildDialogHeader(BuildContext context, WidgetRef ref) {
     return Container(
       padding: EdgeInsets.all(10),
       color: AppColors.appTertiary.withValues(alpha: 0.2),
@@ -56,9 +88,7 @@ class ViewProductDialog extends StatelessWidget {
             icon: Icon(Icons.edit),
           ),
           IconButton(
-            onPressed: () {
-              context.pop();
-            },
+            onPressed: () async => _deleteProduct(context, ref),
             icon: Icon(Icons.delete, color: AppColors.error),
           ),
         ],
