@@ -36,8 +36,16 @@ class ProductRepository {
   }
 
   /// Update a product
-  Future<void> update(ProductModel product) async {
-    final productModelHive = ProductModelHive.fromModel(product);
+  Future<void> update(ProductModel product, File? imageFile) async {
+    String imageDir = imageFile?.path ?? '';
+
+    if (imageFile != null && (imageFile.path != product.image)) {
+      imageDir = await saveImageFile(imageFile, product.productId);
+    }
+
+    final productModelHive = ProductModelHive.fromModel(
+      product.copyWith(image: imageDir),
+    );
     await _hiveService.productBox.put(product.productId, productModelHive);
   }
 

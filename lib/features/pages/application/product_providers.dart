@@ -43,8 +43,14 @@ Future<ProductModel?> fetchProduct(Ref ref, {required String productId}) async {
 }
 
 @riverpod
-Future<void> updateProduct(Ref ref, {required ProductModel product}) async {
-  return await ref.read(productServicesProvider).updateProduct(product);
+Future<void> updateProduct(
+  Ref ref, {
+  required ProductModel product,
+  File? imageFile,
+}) async {
+  return await ref
+      .read(productServicesProvider)
+      .updateProduct(product, imageFile);
 }
 
 @riverpod

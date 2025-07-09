@@ -24,8 +24,8 @@ class ProductServices {
   }
 
   // Update a product
-  Future<void> updateProduct(ProductModel product) async {
-    return _productRepository.update(product);
+  Future<void> updateProduct(ProductModel product, File? imageFile) async {
+    return _productRepository.update(product, imageFile);
   }
 
   // Delete a product

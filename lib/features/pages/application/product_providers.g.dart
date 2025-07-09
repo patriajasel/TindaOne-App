@@ -358,7 +358,7 @@ class _FetchProductProviderElement
   String get productId => (origin as FetchProductProvider).productId;
 }
 
-String _$updateProductHash() => r'5ce8f9bc05d8d7d032967bdbaff8b99bd7357a25';
+String _$updateProductHash() => r'17bd67b588ac9ebd4f664c00048780663d8689d1';
 
 /// See also [updateProduct].
 @ProviderFor(updateProduct)
@@ -372,9 +372,11 @@ class UpdateProductFamily extends Family<AsyncValue<void>> {
   /// See also [updateProduct].
   UpdateProductProvider call({
     required ProductModel product,
+    File? imageFile,
   }) {
     return UpdateProductProvider(
       product: product,
+      imageFile: imageFile,
     );
   }
 
@@ -384,6 +386,7 @@ class UpdateProductFamily extends Family<AsyncValue<void>> {
   ) {
     return call(
       product: provider.product,
+      imageFile: provider.imageFile,
     );
   }
 
@@ -407,10 +410,12 @@ class UpdateProductProvider extends AutoDisposeFutureProvider<void> {
   /// See also [updateProduct].
   UpdateProductProvider({
     required ProductModel product,
+    File? imageFile,
   }) : this._internal(
           (ref) => updateProduct(
             ref as UpdateProductRef,
             product: product,
+            imageFile: imageFile,
           ),
           from: updateProductProvider,
           name: r'updateProductProvider',
@@ -422,6 +427,7 @@ class UpdateProductProvider extends AutoDisposeFutureProvider<void> {
           allTransitiveDependencies:
               UpdateProductFamily._allTransitiveDependencies,
           product: product,
+          imageFile: imageFile,
         );
 
   UpdateProductProvider._internal(
@@ -432,9 +438,11 @@ class UpdateProductProvider extends AutoDisposeFutureProvider<void> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.product,
+    required this.imageFile,
   }) : super.internal();
 
   final ProductModel product;
+  final File? imageFile;
 
   @override
   Override overrideWith(
@@ -450,6 +458,7 @@ class UpdateProductProvider extends AutoDisposeFutureProvider<void> {
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         product: product,
+        imageFile: imageFile,
       ),
     );
   }
@@ -461,13 +470,16 @@ class UpdateProductProvider extends AutoDisposeFutureProvider<void> {
 
   @override
   bool operator ==(Object other) {
-    return other is UpdateProductProvider && other.product == product;
+    return other is UpdateProductProvider &&
+        other.product == product &&
+        other.imageFile == imageFile;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, product.hashCode);
+    hash = _SystemHash.combine(hash, imageFile.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -478,6 +490,9 @@ class UpdateProductProvider extends AutoDisposeFutureProvider<void> {
 mixin UpdateProductRef on AutoDisposeFutureProviderRef<void> {
   /// The parameter `product` of this provider.
   ProductModel get product;
+
+  /// The parameter `imageFile` of this provider.
+  File? get imageFile;
 }
 
 class _UpdateProductProviderElement
@@ -486,6 +501,8 @@ class _UpdateProductProviderElement
 
   @override
   ProductModel get product => (origin as UpdateProductProvider).product;
+  @override
+  File? get imageFile => (origin as UpdateProductProvider).imageFile;
 }
 
 String _$deleteProductHash() => r'7fc93279f04e81beca50c7251aaf66470e601e29';

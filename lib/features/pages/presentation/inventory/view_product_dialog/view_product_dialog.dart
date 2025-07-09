@@ -50,7 +50,7 @@ class ViewProductDialog extends StatelessWidget {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                builder: (context) => EditProductDialog(),
+                builder: (context) => EditProductDialog(product: product),
               );
             },
             icon: Icon(Icons.edit),
