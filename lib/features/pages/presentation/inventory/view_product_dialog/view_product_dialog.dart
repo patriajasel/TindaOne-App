@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tinda_one_app/features/pages/domain/product_model.dart';
 import 'package:tinda_one_app/features/pages/presentation/inventory/edit_product_dialog/edit_product_dialog.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
 class ViewProductDialog extends StatelessWidget {
-  const ViewProductDialog({super.key});
+  final ProductModel product;
+  const ViewProductDialog({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,7 @@ class ViewProductDialog extends StatelessWidget {
           const SizedBox(height: 20),
           _buildAvailableSizes(context),
           const SizedBox(height: 20),
-          _buildInclusionOption(context, isInclusion: false),
+          _buildInclusionOption(context),
           const SizedBox(height: 20),
         ],
       ),
@@ -34,7 +39,7 @@ class ViewProductDialog extends StatelessWidget {
           Icon(Icons.sell, color: AppColors.appSecondary),
           const SizedBox(width: 10),
           Text(
-            'Blouse (Blue)',
+            product.name,
             style: Theme.of(
               context,
             ).textTheme.titleMedium!.copyWith(color: AppColors.appPrimary),
@@ -62,6 +67,11 @@ class ViewProductDialog extends StatelessWidget {
   }
 
   Widget _buildProductImage(BuildContext context) {
+    // Get the total
+    final totalSupply =
+        product.supply ??
+        product.productSizes?.fold(0, (sum, sizes) => sum! + sizes.supply);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
@@ -74,10 +84,14 @@ class ViewProductDialog extends StatelessWidget {
               width: double.infinity,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  'https://picsum.photos/200/300',
-                  fit: BoxFit.cover,
-                ),
+                child: product.image == null
+                    ? Image.asset(
+                        'lib/shared/assets/sales_display.png',
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.file(File(product.image ?? ''), fit: BoxFit.cover),
               ),
             ),
           ),
@@ -86,13 +100,20 @@ class ViewProductDialog extends StatelessWidget {
               children: [
                 ListTile(
                   title: Text('Total Supply: ', style: context.bodySmall),
-                  trailing: Text('100', style: context.bodySmall),
+                  trailing: Text(
+                    totalSupply.toString(),
+                    style: context.bodySmall,
+                  ),
                 ),
 
-                ListTile(
-                  title: Text('Price: ', style: context.bodySmall),
-                  trailing: Text('Php 100', style: context.bodySmall),
-                ),
+                if (product.price != null)
+                  ListTile(
+                    title: Text('Price: ', style: context.bodySmall),
+                    trailing: Text(
+                      product.price!.toStringAsFixed(2),
+                      style: context.bodySmall,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -102,60 +123,99 @@ class ViewProductDialog extends StatelessWidget {
   }
 
   Widget _buildAvailableSizes(BuildContext context) {
-    List<String> sizes = [
-      '8',
-      '10',
-      '12',
-      '14',
-      '16',
-      '18',
-      '20',
-      '22',
-      '24',
-      'XS',
-      'S',
-      'M',
-      'L',
-      'XL',
-    ];
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Available Sizes:',
-            style: Theme.of(context).textTheme.displaySmall,
-          ),
-          const SizedBox(height: 20),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: sizes.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              childAspectRatio: 1.5,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
+    return product.productSizes != null
+        ? Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Size',
+                          style: context.bodySmall?.copyWith(
+                            color: AppColors.appPrimary,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Price',
+                            style: context.bodySmall?.copyWith(
+                              color: AppColors.appPrimary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Text(
+                          'Supply',
+                          style: context.bodySmall?.copyWith(
+                            color: AppColors.appPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: product.productSizes?.length,
+                      itemBuilder: (context, index) {
+                        return _buildSizes(
+                          context,
+                          sizesData: product.productSizes![index],
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
-            itemBuilder: (context, index) {
-              final size = sizes[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          )
+        : SizedBox();
+  }
 
-                child: Center(child: Text(size, style: context.bodySmall)),
-              );
-            },
+  Widget _buildSizes(BuildContext context, {required ProductSizes sizesData}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(child: Text(sizesData.size, style: context.labelSmall)),
+          SizedBox(
+            width: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(
+                  FontAwesomeIcons.pesoSign,
+                  size: 20,
+                  color: AppColors.appSecondary,
+                ),
+                const Spacer(),
+                Text(
+                  sizesData.price.toStringAsFixed(2),
+                  style: context.labelSmall,
+                  textAlign: TextAlign.end,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Text(
+              sizesData.supply.toString(),
+              style: context.labelSmall,
+              textAlign: TextAlign.end,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInclusionOption(
-    BuildContext context, {
-    required bool isInclusion,
-  }) {
+  Widget _buildInclusionOption(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -172,7 +232,7 @@ class ViewProductDialog extends StatelessWidget {
                   contentPadding: const EdgeInsets.all(0),
                   title: Text('Yes', style: context.textTheme.bodySmall),
                   value: true,
-                  groupValue: isInclusion,
+                  groupValue: product.isInclusion,
                   onChanged: null,
                 ),
               ),
@@ -181,7 +241,7 @@ class ViewProductDialog extends StatelessWidget {
                   contentPadding: const EdgeInsets.all(0),
                   title: Text('No', style: context.textTheme.bodySmall),
                   value: false,
-                  groupValue: isInclusion,
+                  groupValue: product.isInclusion,
                   onChanged: null,
                 ),
               ),

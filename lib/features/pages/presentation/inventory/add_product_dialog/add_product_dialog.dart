@@ -22,7 +22,7 @@ class AddProductDialog extends HookConsumerWidget {
   Future<void> _uploadImage(
     BuildContext context, {
     required ImagePicker picker,
-    required ValueNotifier<File?> selectedImage
+    required ValueNotifier<File?> selectedImage,
   }) async {
     try {
       final XFile? pickedFile = await picker.pickImage(
@@ -91,6 +91,8 @@ class AddProductDialog extends HookConsumerWidget {
             duration: Duration(seconds: 3),
           ),
         );
+
+        context.pop();
       }
     } catch (e) {
       if (context.mounted) {
