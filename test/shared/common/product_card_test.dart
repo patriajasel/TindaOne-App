@@ -7,7 +7,6 @@ void main() {
     const String testProductId = 'test-product-123';
     const String testName = 'Test Product';
     const String testImageUrl = 'https://example.com/test-image.jpg';
-    const List<String> testSizes = ['S', 'M', 'L', 'XL'];
 
     Widget createWidgetUnderTest({required int testSupply}) {
       return MaterialApp(
@@ -16,7 +15,6 @@ void main() {
             productId: testProductId,
             name: testName,
             photo: testImageUrl,
-            sizes: testSizes,
             supply: testSupply,
           ),
         ),
