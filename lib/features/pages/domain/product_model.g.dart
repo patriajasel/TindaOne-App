@@ -19,20 +19,19 @@ class ProductModelHiveAdapter extends TypeAdapter<ProductModelHive> {
     return ProductModelHive()
       ..productId = fields[0] as String
       ..name = fields[1] as String
-      ..image = fields[2] as String
+      ..image = fields[2] as String?
       ..isInclusion = fields[3] as bool
       ..priceType = fields[4] as String
-      ..productSizes = fields[5] as ProductSizesHive?
+      ..productSizes = (fields[5] as List?)?.cast<ProductSizesHive>()
       ..price = fields[6] as int?
       ..supply = fields[7] as int?
-      ..size = fields[8] as String?
-      ..barCode = fields[9] as String?;
+      ..barCode = fields[8] as String?;
   }
 
   @override
   void write(BinaryWriter writer, ProductModelHive obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.productId)
       ..writeByte(1)
@@ -50,8 +49,6 @@ class ProductModelHiveAdapter extends TypeAdapter<ProductModelHive> {
       ..writeByte(7)
       ..write(obj.supply)
       ..writeByte(8)
-      ..write(obj.size)
-      ..writeByte(9)
       ..write(obj.barCode);
   }
 
@@ -116,15 +113,14 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
     _$ProductModelImpl(
       productId: json['productId'] as String,
       name: json['name'] as String,
-      image: json['image'] as String,
+      image: json['image'] as String?,
       isInclusion: json['isInclusion'] as bool,
       priceType: json['priceType'] as String,
-      productSizes: json['productSizes'] == null
-          ? null
-          : ProductSizes.fromJson(json['productSizes'] as Map<String, dynamic>),
+      productSizes: (json['productSizes'] as List<dynamic>?)
+          ?.map((e) => ProductSizes.fromJson(e as Map<String, dynamic>))
+          .toList(),
       price: (json['price'] as num?)?.toInt(),
       supply: (json['supply'] as num?)?.toInt(),
-      size: json['size'] as String?,
       barCode: json['barCode'] as String?,
     );
 
@@ -138,7 +134,6 @@ Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
       'productSizes': instance.productSizes,
       'price': instance.price,
       'supply': instance.supply,
-      'size': instance.size,
       'barCode': instance.barCode,
     };
 

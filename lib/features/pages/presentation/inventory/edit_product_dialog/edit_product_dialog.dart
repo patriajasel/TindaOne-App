@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tinda_one_app/features/pages/domain/product_model.dart';
 import 'package:tinda_one_app/features/pages/presentation/inventory/add_sizes_dialog/add_sizes.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
@@ -21,8 +22,8 @@ class EditProductDialog extends HookWidget {
     final selectedPriceOption = useState<String>(priceOptions.value.first);
     final amountController = useTextEditingController();
     final supplyController = useTextEditingController();
-
     final isInclusion = useState<bool>(false);
+    final productSizes = useState<List<ProductSizes>?>(null);
 
     return FractionallySizedBox(
       heightFactor: 0.8,
@@ -42,6 +43,7 @@ class EditProductDialog extends HookWidget {
                 amountController: amountController,
                 supplyController: supplyController,
                 isInclusion: isInclusion,
+                productSizes: productSizes,
               ),
             ),
           ],
@@ -84,6 +86,7 @@ class EditProductDialog extends HookWidget {
     required TextEditingController amountController,
     required TextEditingController supplyController,
     required ValueNotifier<bool> isInclusion,
+    required ValueNotifier<List<ProductSizes>?> productSizes,
   }) {
     return Padding(
       padding: EdgeInsets.all(20),
@@ -102,6 +105,7 @@ class EditProductDialog extends HookWidget {
             selectedOption: selectedOption,
             amountController: amountController,
             supplyController: supplyController,
+            productSizes: productSizes,
           ),
 
           const SizedBox(height: 30),
@@ -171,6 +175,7 @@ class EditProductDialog extends HookWidget {
     required ValueNotifier<String> selectedOption,
     required TextEditingController amountController,
     required TextEditingController supplyController,
+    required ValueNotifier<List<ProductSizes>?> productSizes,
   }) {
     return Column(
       children: [
@@ -200,7 +205,8 @@ class EditProductDialog extends HookWidget {
             supplyController: supplyController,
           ),
 
-        if (selectedOption.value == 'Price by Size') _buildPriceBySize(context),
+        if (selectedOption.value == 'Price by Size')
+          _buildPriceBySize(context, productSizes: productSizes),
       ],
     );
   }
@@ -222,7 +228,10 @@ class EditProductDialog extends HookWidget {
     );
   }
 
-  Widget _buildPriceBySize(BuildContext context) {
+  Widget _buildPriceBySize(
+    BuildContext context, {
+    required ValueNotifier<List<ProductSizes>?> productSizes,
+  }) {
     return Column(
       children: [
         Padding(
@@ -231,7 +240,8 @@ class EditProductDialog extends HookWidget {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) => AddSizesDialog(),
+                builder: (context) =>
+                    AddSizesDialog(productSizes: productSizes),
               );
             },
             icon: Icon(Icons.straighten),

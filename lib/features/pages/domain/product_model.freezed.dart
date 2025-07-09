@@ -22,13 +22,12 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) {
 mixin _$ProductModel {
   String get productId => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get image => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError;
   bool get isInclusion => throw _privateConstructorUsedError;
   String get priceType => throw _privateConstructorUsedError;
-  ProductSizes? get productSizes => throw _privateConstructorUsedError;
+  List<ProductSizes>? get productSizes => throw _privateConstructorUsedError;
   int? get price => throw _privateConstructorUsedError;
   int? get supply => throw _privateConstructorUsedError;
-  String? get size => throw _privateConstructorUsedError;
   String? get barCode => throw _privateConstructorUsedError;
 
   /// Serializes this ProductModel to a JSON map.
@@ -50,16 +49,13 @@ abstract class $ProductModelCopyWith<$Res> {
   $Res call(
       {String productId,
       String name,
-      String image,
+      String? image,
       bool isInclusion,
       String priceType,
-      ProductSizes? productSizes,
+      List<ProductSizes>? productSizes,
       int? price,
       int? supply,
-      String? size,
       String? barCode});
-
-  $ProductSizesCopyWith<$Res>? get productSizes;
 }
 
 /// @nodoc
@@ -79,13 +75,12 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
   $Res call({
     Object? productId = null,
     Object? name = null,
-    Object? image = null,
+    Object? image = freezed,
     Object? isInclusion = null,
     Object? priceType = null,
     Object? productSizes = freezed,
     Object? price = freezed,
     Object? supply = freezed,
-    Object? size = freezed,
     Object? barCode = freezed,
   }) {
     return _then(_value.copyWith(
@@ -97,10 +92,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      image: null == image
+      image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       isInclusion: null == isInclusion
           ? _value.isInclusion
           : isInclusion // ignore: cast_nullable_to_non_nullable
@@ -112,7 +107,7 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
       productSizes: freezed == productSizes
           ? _value.productSizes
           : productSizes // ignore: cast_nullable_to_non_nullable
-              as ProductSizes?,
+              as List<ProductSizes>?,
       price: freezed == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -121,29 +116,11 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.supply
           : supply // ignore: cast_nullable_to_non_nullable
               as int?,
-      size: freezed == size
-          ? _value.size
-          : size // ignore: cast_nullable_to_non_nullable
-              as String?,
       barCode: freezed == barCode
           ? _value.barCode
           : barCode // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
-  }
-
-  /// Create a copy of ProductModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ProductSizesCopyWith<$Res>? get productSizes {
-    if (_value.productSizes == null) {
-      return null;
-    }
-
-    return $ProductSizesCopyWith<$Res>(_value.productSizes!, (value) {
-      return _then(_value.copyWith(productSizes: value) as $Val);
-    });
   }
 }
 
@@ -158,17 +135,13 @@ abstract class _$$ProductModelImplCopyWith<$Res>
   $Res call(
       {String productId,
       String name,
-      String image,
+      String? image,
       bool isInclusion,
       String priceType,
-      ProductSizes? productSizes,
+      List<ProductSizes>? productSizes,
       int? price,
       int? supply,
-      String? size,
       String? barCode});
-
-  @override
-  $ProductSizesCopyWith<$Res>? get productSizes;
 }
 
 /// @nodoc
@@ -186,13 +159,12 @@ class __$$ProductModelImplCopyWithImpl<$Res>
   $Res call({
     Object? productId = null,
     Object? name = null,
-    Object? image = null,
+    Object? image = freezed,
     Object? isInclusion = null,
     Object? priceType = null,
     Object? productSizes = freezed,
     Object? price = freezed,
     Object? supply = freezed,
-    Object? size = freezed,
     Object? barCode = freezed,
   }) {
     return _then(_$ProductModelImpl(
@@ -204,10 +176,10 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      image: null == image
+      image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       isInclusion: null == isInclusion
           ? _value.isInclusion
           : isInclusion // ignore: cast_nullable_to_non_nullable
@@ -217,9 +189,9 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           : priceType // ignore: cast_nullable_to_non_nullable
               as String,
       productSizes: freezed == productSizes
-          ? _value.productSizes
+          ? _value._productSizes
           : productSizes // ignore: cast_nullable_to_non_nullable
-              as ProductSizes?,
+              as List<ProductSizes>?,
       price: freezed == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -228,10 +200,6 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.supply
           : supply // ignore: cast_nullable_to_non_nullable
               as int?,
-      size: freezed == size
-          ? _value.size
-          : size // ignore: cast_nullable_to_non_nullable
-              as String?,
       barCode: freezed == barCode
           ? _value.barCode
           : barCode // ignore: cast_nullable_to_non_nullable
@@ -246,14 +214,14 @@ class _$ProductModelImpl implements _ProductModel {
   const _$ProductModelImpl(
       {required this.productId,
       required this.name,
-      required this.image,
+      this.image,
       required this.isInclusion,
       required this.priceType,
-      this.productSizes,
+      final List<ProductSizes>? productSizes,
       this.price,
       this.supply,
-      this.size,
-      this.barCode});
+      this.barCode})
+      : _productSizes = productSizes;
 
   factory _$ProductModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductModelImplFromJson(json);
@@ -263,25 +231,31 @@ class _$ProductModelImpl implements _ProductModel {
   @override
   final String name;
   @override
-  final String image;
+  final String? image;
   @override
   final bool isInclusion;
   @override
   final String priceType;
+  final List<ProductSizes>? _productSizes;
   @override
-  final ProductSizes? productSizes;
+  List<ProductSizes>? get productSizes {
+    final value = _productSizes;
+    if (value == null) return null;
+    if (_productSizes is EqualUnmodifiableListView) return _productSizes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final int? price;
   @override
   final int? supply;
   @override
-  final String? size;
-  @override
   final String? barCode;
 
   @override
   String toString() {
-    return 'ProductModel(productId: $productId, name: $name, image: $image, isInclusion: $isInclusion, priceType: $priceType, productSizes: $productSizes, price: $price, supply: $supply, size: $size, barCode: $barCode)';
+    return 'ProductModel(productId: $productId, name: $name, image: $image, isInclusion: $isInclusion, priceType: $priceType, productSizes: $productSizes, price: $price, supply: $supply, barCode: $barCode)';
   }
 
   @override
@@ -297,18 +271,26 @@ class _$ProductModelImpl implements _ProductModel {
                 other.isInclusion == isInclusion) &&
             (identical(other.priceType, priceType) ||
                 other.priceType == priceType) &&
-            (identical(other.productSizes, productSizes) ||
-                other.productSizes == productSizes) &&
+            const DeepCollectionEquality()
+                .equals(other._productSizes, _productSizes) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.supply, supply) || other.supply == supply) &&
-            (identical(other.size, size) || other.size == size) &&
             (identical(other.barCode, barCode) || other.barCode == barCode));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, productId, name, image,
-      isInclusion, priceType, productSizes, price, supply, size, barCode);
+  int get hashCode => Object.hash(
+      runtimeType,
+      productId,
+      name,
+      image,
+      isInclusion,
+      priceType,
+      const DeepCollectionEquality().hash(_productSizes),
+      price,
+      supply,
+      barCode);
 
   /// Create a copy of ProductModel
   /// with the given fields replaced by the non-null parameter values.
@@ -330,13 +312,12 @@ abstract class _ProductModel implements ProductModel {
   const factory _ProductModel(
       {required final String productId,
       required final String name,
-      required final String image,
+      final String? image,
       required final bool isInclusion,
       required final String priceType,
-      final ProductSizes? productSizes,
+      final List<ProductSizes>? productSizes,
       final int? price,
       final int? supply,
-      final String? size,
       final String? barCode}) = _$ProductModelImpl;
 
   factory _ProductModel.fromJson(Map<String, dynamic> json) =
@@ -347,19 +328,17 @@ abstract class _ProductModel implements ProductModel {
   @override
   String get name;
   @override
-  String get image;
+  String? get image;
   @override
   bool get isInclusion;
   @override
   String get priceType;
   @override
-  ProductSizes? get productSizes;
+  List<ProductSizes>? get productSizes;
   @override
   int? get price;
   @override
   int? get supply;
-  @override
-  String? get size;
   @override
   String? get barCode;
 
