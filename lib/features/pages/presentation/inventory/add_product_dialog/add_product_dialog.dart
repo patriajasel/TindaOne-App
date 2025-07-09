@@ -83,6 +83,8 @@ class AddProductDialog extends HookConsumerWidget {
         ).future,
       );
 
+      ref.invalidate(fetchAllProductsProvider);
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

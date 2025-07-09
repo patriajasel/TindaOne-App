@@ -20,6 +20,8 @@ class ViewProductDialog extends ConsumerWidget {
         deleteProductProvider(productId: product.productId).future,
       );
 
+      ref.invalidate(fetchAllProductsProvider);
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
