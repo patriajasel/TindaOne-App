@@ -20,7 +20,7 @@ class ItemCounter extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Theme.of(context).dividerColor, width: 2),
+            border: Border.all(color: Theme.of(context).dividerColor, width: 1),
           ),
           padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
           child: Text(

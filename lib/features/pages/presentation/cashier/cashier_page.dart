@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tinda_one_app/features/pages/application/product_providers.dart';
+import 'package:tinda_one_app/features/pages/domain/product_model.dart';
 import 'package:tinda_one_app/features/pages/presentation/cashier/add_item_dialog/add_item_dialog.dart';
 import 'package:tinda_one_app/features/pages/presentation/cashier/create_order/create_order_dialog.dart';
 import 'package:tinda_one_app/shared/common/item_card.dart';
+import 'package:tinda_one_app/shared/themes/app_colors.dart';
+import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
-class CashierPage extends StatelessWidget {
+class CashierPage extends ConsumerWidget {
   const CashierPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final suggestions = [
       SearchFieldListItem('Blue Blouse'),
       SearchFieldListItem('Red Shirt'),
@@ -17,19 +22,22 @@ class CashierPage extends StatelessWidget {
       SearchFieldListItem('Black Jacket'),
     ];
 
+    final productAsync = ref.watch(fetchAllProductsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cashier'),
         actions: [_buildCartButton(context)],
       ),
-      body: _buildMainContent(context, suggestions),
+      body: _buildMainContent(context, suggestions, productAsync: productAsync),
     );
   }
 
   Widget _buildMainContent(
     BuildContext context,
-    List<SearchFieldListItem<dynamic>> suggestions,
-  ) {
+    List<SearchFieldListItem<dynamic>> suggestions, {
+    required AsyncValue<List<ProductModel>> productAsync,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -47,43 +55,58 @@ class CashierPage extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Product List
-          Expanded(child: _buildProductList()),
+          Expanded(
+            child: _buildProductList(context, productAsync: productAsync),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildProductList() {
-    return ListView.builder(
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return ItemCard(
-          productId: '1',
-          name: 'Blue Blouse',
-          imageUrl: 'https://picsum.photos/200/300',
-          sizes: ['S', 'M', 'L', '16', '18', '20'],
-          onPressed: () => showModalBottomSheet(
-            context: context,
-            builder: (context) => AddItemDialog(
-              productId: '1',
-              name: 'Blue Blouse',
-              sizes: [
-                '8',
-                '10',
-                '12',
-                '14',
-                '16',
-                '18',
-                '20',
-                '22',
-                '24',
-                'XS',
-                'S',
-                'M',
-                'L',
-                'XL',
-              ],
+  Widget _buildProductList(
+    BuildContext context, {
+    required AsyncValue<List<ProductModel>> productAsync,
+  }) {
+    return productAsync.when(
+      data: (products) {
+        if (products.isEmpty) {
+          return Center(
+            child: Text(
+              'No products have been added yet.',
+              style: context.labelSmall,
             ),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            final product = products[index];
+
+            return ItemCard(
+              productId: product.productId,
+              name: product.name,
+              imageUrl: product.image,
+              productSizes: product.productSizes,
+              supply: product.supply,
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                builder: (context) => AddItemDialog(product: product),
+              ),
+            );
+          },
+        );
+      },
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(color: AppColors.appPrimary),
+        );
+      },
+      error: (err, stack) {
+        return Center(
+          child: Text(
+            'Error loading products: ${err.toString()}',
+            style: const TextStyle(color: Colors.red),
           ),
         );
       },

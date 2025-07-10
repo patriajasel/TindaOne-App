@@ -2,26 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tinda_one_app/features/pages/domain/product_model.dart';
 import 'package:tinda_one_app/shared/common/item_counter.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 
 class AddItemDialog extends HookWidget {
-  final String productId;
-  final String name;
-  final List<String> sizes;
+  final ProductModel product;
 
-  const AddItemDialog({
-    super.key,
-    required this.productId,
-    required this.name,
-    required this.sizes,
-  });
+  const AddItemDialog({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
-    final selectedSizes = useState<List<String>>([]);
+    final selectedSizes = useState<List<ProductSizes>>([]);
     // Map to store individual counts for each size
-    final sizeCounts = useState<Map<String, int>>({});
+    final sizeCounts = useState<Map<ProductSizes, int>>({});
+    final itemCount = useState<int>(1);
 
     return SingleChildScrollView(
       child: Column(
@@ -30,31 +25,99 @@ class AddItemDialog extends HookWidget {
           _buildDialogHeader(context),
 
           const SizedBox(height: 10),
-          _buildAvailableSizes(
-            context,
-            selectedSizes: selectedSizes,
-            sizeCounts: sizeCounts,
-          ),
-
-          if (selectedSizes.value.isNotEmpty) ...[
-            const SizedBox(height: 16),
+          if (product.productSizes == null) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Selected: ${selectedSizes.value.length} size${selectedSizes.value.length == 1 ? '' : 's'}',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppColors.appPrimary),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildSingleItemDetails(
+                      context,
+                      itemCount: itemCount,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: ItemCounter(count: itemCount),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 10),
-            _buildSelectedSizes(selectedSizes, context, sizeCounts),
 
             const SizedBox(height: 10),
+
             _buildActionButtons(context),
           ],
+
+          if (product.productSizes != null)
+            _buildAvailableSizes(
+              context,
+              selectedSizes: selectedSizes,
+              sizeCounts: sizeCounts,
+            ),
+
+          if (product.productSizes != null)
+            if (selectedSizes.value.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'Selected: ${selectedSizes.value.length} size${selectedSizes.value.length == 1 ? '' : 's'}',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: AppColors.appPrimary),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              _buildSelectedSizes(selectedSizes, context, sizeCounts),
+
+              const SizedBox(height: 10),
+
+              _buildActionButtons(context),
+            ],
         ],
       ),
+    );
+  }
+
+  Widget _buildSingleItemDetails(
+    BuildContext context, {
+    required ValueNotifier<int> itemCount,
+  }) {
+    final price = product.price! * itemCount.value;
+
+    return Row(
+      children: [
+        // Selected Size
+        Expanded(
+          child: Center(
+            child: Text(
+              'Qty:',
+              style: Theme.of(
+                context,
+              ).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              FontAwesomeIcons.pesoSign,
+              color: AppColors.appSecondary,
+              size: 18,
+            ),
+            Text(
+              price.toStringAsFixed(2),
+              style: Theme.of(context).textTheme.displaySmall,
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -91,9 +154,9 @@ class AddItemDialog extends HookWidget {
   }
 
   Widget _buildSelectedSizes(
-    ValueNotifier<List<String>> selectedSizes,
+    ValueNotifier<List<ProductSizes>> selectedSizes,
     BuildContext context,
-    ValueNotifier<Map<String, int>> sizeCounts,
+    ValueNotifier<Map<ProductSizes, int>> sizeCounts,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -101,6 +164,7 @@ class AddItemDialog extends HookWidget {
         children: List.generate(selectedSizes.value.length, (index) {
           final size = selectedSizes.value[index];
           final countNotifier = useState<int>(sizeCounts.value[size] ?? 1);
+          final price = size.price * countNotifier.value;
 
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -114,14 +178,13 @@ class AddItemDialog extends HookWidget {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: Theme.of(context).dividerColor,
-                        width: 2,
+                        width: 1,
                       ),
                     ),
                     child: Center(
                       child: Text(
-                        size,
-                        style: Theme.of(context).textTheme.displaySmall!
-                            .copyWith(fontWeight: FontWeight.bold),
+                        size.size,
+                        style: Theme.of(context).textTheme.displaySmall,
                       ),
                     ),
                   ),
@@ -131,11 +194,14 @@ class AddItemDialog extends HookWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(FontAwesomeIcons.pesoSign),
+                      Icon(
+                        FontAwesomeIcons.pesoSign,
+                        color: AppColors.appSecondary,
+                        size: 18,
+                      ),
                       Text(
-                        '500',
-                        style: Theme.of(context).textTheme.displaySmall!
-                            .copyWith(fontWeight: FontWeight.bold),
+                        price.toStringAsFixed(2),
+                        style: Theme.of(context).textTheme.displaySmall,
                       ),
                     ],
                   ),
@@ -163,7 +229,7 @@ class AddItemDialog extends HookWidget {
           Icon(Icons.sell, color: AppColors.appSecondary),
           const SizedBox(width: 10),
           Text(
-            name,
+            product.name,
             style: Theme.of(
               context,
             ).textTheme.titleMedium!.copyWith(color: AppColors.appPrimary),
@@ -182,11 +248,11 @@ class AddItemDialog extends HookWidget {
 
   Widget _buildAvailableSizes(
     BuildContext context, {
-    required ValueNotifier<List<String>> selectedSizes,
-    required ValueNotifier<Map<String, int>> sizeCounts,
+    required ValueNotifier<List<ProductSizes>> selectedSizes,
+    required ValueNotifier<Map<ProductSizes, int>> sizeCounts,
   }) {
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -198,7 +264,7 @@ class AddItemDialog extends HookWidget {
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: sizes.length,
+            itemCount: product.productSizes?.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 5,
               childAspectRatio: 1.5,
@@ -206,11 +272,12 @@ class AddItemDialog extends HookWidget {
               mainAxisSpacing: 5,
             ),
             itemBuilder: (context, index) {
-              final size = sizes[index];
+              final size = product.productSizes?[index];
               return ChoiceChip(
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 visualDensity: VisualDensity.compact,
-                label: Text(size),
+                
+                label: Text(size!.size),
                 selected: selectedSizes.value.contains(size),
                 onSelected: (bool selected) {
                   if (selected) {
@@ -224,7 +291,9 @@ class AddItemDialog extends HookWidget {
                         .where((selectedSize) => selectedSize != size)
                         .toList();
                     // Remove count for this size
-                    final newCounts = Map<String, int>.from(sizeCounts.value);
+                    final newCounts = Map<ProductSizes, int>.from(
+                      sizeCounts.value,
+                    );
                     newCounts.remove(size);
                     sizeCounts.value = newCounts;
                   }
