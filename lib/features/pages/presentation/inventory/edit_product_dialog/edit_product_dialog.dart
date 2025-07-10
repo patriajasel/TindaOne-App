@@ -1,28 +1,133 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:tinda_one_app/features/pages/application/product_providers.dart';
+import 'package:tinda_one_app/features/pages/domain/product_model.dart';
 import 'package:tinda_one_app/features/pages/presentation/inventory/add_sizes_dialog/add_sizes.dart';
+import 'package:tinda_one_app/features/pages/presentation/inventory/edit_product_dialog/validators/edit_product_validators.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
-class EditProductDialog extends HookWidget {
-  const EditProductDialog({super.key});
+class EditProductDialog extends HookConsumerWidget {
+  final ProductModel product;
+  const EditProductDialog({super.key, required this.product});
+
+  // Select Image using Image Picker
+  Future<void> _uploadImage(
+    BuildContext context, {
+    required ImagePicker picker,
+    required ValueNotifier<File?> selectedImage,
+  }) async {
+    try {
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
+
+      if (pickedFile != null) {
+        selectedImage.value = File(pickedFile.path);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to upload image: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  // Add the product to hive box
+  Future<void> _updateProduct(
+    BuildContext context,
+    WidgetRef ref, {
+    required TextEditingController productNameController,
+    required ValueNotifier<String> selectedOption,
+    required TextEditingController amountController,
+    required TextEditingController supplyController,
+    required ValueNotifier<bool> isInclusion,
+    required ValueNotifier<File?> selectedImage,
+    required ValueNotifier<List<ProductSizes>?> productSizes,
+  }) async {
+    // Update the existing product
+    final productData = product.copyWith(
+      name: productNameController.text,
+      price: selectedOption.value == "Fixed Price"
+          ? int.parse(amountController.text)
+          : null,
+      supply: selectedOption.value == "Fixed Price"
+          ? int.parse(supplyController.text)
+          : null,
+      isInclusion: isInclusion.value,
+      productSizes: selectedOption.value != "Fixed Price"
+          ? productSizes.value
+          : null,
+      priceType: selectedOption.value,
+    );
+
+    try {
+      await ref.read(
+        updateProductProvider(
+          product: productData,
+          imageFile: selectedImage.value,
+        ).future,
+      );
+
+      ref.invalidate(fetchAllProductsProvider);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Product was updated successfully'),
+            backgroundColor: AppColors.appTertiary,
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        context.pop();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update product: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
 
-    final productNameController = useTextEditingController();
+    final productNameController = useTextEditingController(text: product.name);
     final priceOptions = useState<List<String>>([
       'Fixed Price',
       'Price by Size',
     ]);
-    final selectedPriceOption = useState<String>(priceOptions.value.first);
-    final amountController = useTextEditingController();
-    final supplyController = useTextEditingController();
-
-    final isInclusion = useState<bool>(false);
+    final selectedPriceOption = useState<String>(product.priceType);
+    final amountController = useTextEditingController(
+      text: product.price?.toString(),
+    );
+    final supplyController = useTextEditingController(
+      text: product.supply?.toString(),
+    );
+    final isInclusion = useState<bool>(product.isInclusion);
+    final productSizes = useState<List<ProductSizes>?>(product.productSizes);
+    final selectedImage = useState<File?>(
+      product.image != null ? File(product.image!) : null,
+    );
 
     return FractionallySizedBox(
       heightFactor: 0.8,
@@ -34,14 +139,18 @@ class EditProductDialog extends HookWidget {
             const SizedBox(height: 10),
             Form(
               key: formKey,
-              child: _buildAddProductForm(
+              child: _buildEditProductForm(
                 context,
+                ref,
+                formKey: formKey,
                 productNameController: productNameController,
                 priceOptions: priceOptions.value,
                 selectedOption: selectedPriceOption,
                 amountController: amountController,
                 supplyController: supplyController,
                 isInclusion: isInclusion,
+                productSizes: productSizes,
+                selectedImage: selectedImage,
               ),
             ),
           ],
@@ -76,20 +185,24 @@ class EditProductDialog extends HookWidget {
     );
   }
 
-  Widget _buildAddProductForm(
-    BuildContext context, {
+  Widget _buildEditProductForm(
+    BuildContext context,
+    WidgetRef ref, {
+    required GlobalKey<FormState> formKey,
     required TextEditingController productNameController,
     required List<String> priceOptions,
     required ValueNotifier<String> selectedOption,
     required TextEditingController amountController,
     required TextEditingController supplyController,
     required ValueNotifier<bool> isInclusion,
+    required ValueNotifier<List<ProductSizes>?> productSizes,
+    required ValueNotifier<File?> selectedImage,
   }) {
     return Padding(
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
-          _buildUploadImage(),
+          _buildUploadImage(context, selectedImage: selectedImage),
           const SizedBox(height: 20),
           _buildProductNameTextField(
             context,
@@ -102,6 +215,7 @@ class EditProductDialog extends HookWidget {
             selectedOption: selectedOption,
             amountController: amountController,
             supplyController: supplyController,
+            productSizes: productSizes,
           ),
 
           const SizedBox(height: 30),
@@ -110,13 +224,29 @@ class EditProductDialog extends HookWidget {
 
           const SizedBox(height: 10),
 
-          _buildActionButtons(context),
+          _buildActionButtons(
+            context,
+            ref,
+            formKey,
+            productNameController: productNameController,
+            amountController: amountController,
+            isInclusion: isInclusion,
+            productSizes: productSizes,
+            selectedImage: selectedImage,
+            selectedOption: selectedOption,
+            supplyController: supplyController,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildUploadImage() {
+  Widget _buildUploadImage(
+    BuildContext context, {
+    required ValueNotifier<File?> selectedImage,
+  }) {
+    final ImagePicker picker = ImagePicker();
+
     return Row(
       spacing: 20,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,21 +257,53 @@ class EditProductDialog extends HookWidget {
             width: double.infinity,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                'https://picsum.photos/200/300',
-                fit: BoxFit.cover,
-              ),
+              child: selectedImage.value == null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image_not_supported,
+                          color: AppColors.appSecondary,
+                        ),
+                        Text(
+                          'No Image has been uploaded yet',
+                          style: context.bodySmall,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )
+                  : Image.file(selectedImage.value!, fit: BoxFit.cover),
             ),
           ),
         ),
         Expanded(
           child: Column(
             children: [
-              ElevatedButton(onPressed: () {}, child: Text('Upload Photo')),
-              ElevatedButton(onPressed: () {}, child: Text('Remove Photo')),
-              ElevatedButton(
+              // Elevated button for uploading image
+              ElevatedButton.icon(
+                onPressed: () async => await _uploadImage(
+                  context,
+                  picker: picker,
+                  selectedImage: selectedImage,
+                ),
+                icon: Icon(Icons.upload),
+                label: Text('Upload Photo'),
+              ),
+
+              // Elevated button for removing photo
+              if (selectedImage.value != null)
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: Icon(Icons.image_not_supported),
+                  label: Text('Remove Photo'),
+                ),
+
+              // Elevated button for generating bar code
+              ElevatedButton.icon(
                 onPressed: () {},
-                child: Text('Generate Bar Code'),
+                icon: Icon(Icons.qr_code_2),
+                label: Text('Generate Bar Code'),
               ),
             ],
           ),
@@ -161,7 +323,7 @@ class EditProductDialog extends HookWidget {
       ),
       style: context.bodySmall,
       controller: controller,
-      //validator: LoginValidators.email,
+      validator: EditProductValidators.productName,
     );
   }
 
@@ -171,6 +333,7 @@ class EditProductDialog extends HookWidget {
     required ValueNotifier<String> selectedOption,
     required TextEditingController amountController,
     required TextEditingController supplyController,
+    required ValueNotifier<List<ProductSizes>?> productSizes,
   }) {
     return Column(
       children: [
@@ -200,7 +363,8 @@ class EditProductDialog extends HookWidget {
             supplyController: supplyController,
           ),
 
-        if (selectedOption.value == 'Price by Size') _buildPriceBySize(context),
+        if (selectedOption.value == 'Price by Size')
+          _buildPriceBySize(context, productSizes: productSizes),
       ],
     );
   }
@@ -222,23 +386,119 @@ class EditProductDialog extends HookWidget {
     );
   }
 
-  Widget _buildPriceBySize(BuildContext context) {
+  Widget _buildPriceBySize(
+    BuildContext context, {
+    required ValueNotifier<List<ProductSizes>?> productSizes,
+  }) {
     return Column(
       children: [
+        if (productSizes.value == null || productSizes.value!.isEmpty)
+          SizedBox(
+            height: 50,
+            child: Center(
+              child: Text(
+                'No sizes have been added yet.',
+                style: context.bodySmall,
+              ),
+            ),
+          )
+        else
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Size',
+                    style: context.bodySmall?.copyWith(
+                      color: AppColors.appPrimary,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Price',
+                      style: context.bodySmall?.copyWith(
+                        color: AppColors.appPrimary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Text(
+                    'Supply',
+                    style: context.bodySmall?.copyWith(
+                      color: AppColors.appPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: productSizes.value?.length,
+                itemBuilder: (context, index) {
+                  return _buildAddedSizes(
+                    context,
+                    sizesData: productSizes.value![index],
+                  );
+                },
+              ),
+            ],
+          ),
+        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50),
           child: ElevatedButton.icon(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AddSizesDialog(),
-              );
-            },
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => AddSizesDialog(productSizes: productSizes),
+            ),
             icon: Icon(Icons.straighten),
             label: Text('Add Sizes'),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAddedSizes(
+    BuildContext context, {
+    required ProductSizes sizesData,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(child: Text(sizesData.size, style: context.labelSmall)),
+          SizedBox(
+            width: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(
+                  FontAwesomeIcons.pesoSign,
+                  size: 20,
+                  color: AppColors.appSecondary,
+                ),
+                const Spacer(),
+                Text(
+                  sizesData.price.toStringAsFixed(2),
+                  style: context.labelSmall,
+                  textAlign: TextAlign.end,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Text(
+              sizesData.supply.toString(),
+              style: context.labelSmall,
+              textAlign: TextAlign.end,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -299,7 +559,9 @@ class EditProductDialog extends HookWidget {
       ),
       style: context.bodySmall,
       controller: controller,
-      //validator: LoginValidators.email,
+      validator: EditProductValidators.amount,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
     );
   }
 
@@ -314,11 +576,24 @@ class EditProductDialog extends HookWidget {
       ),
       style: context.bodySmall,
       controller: controller,
-      //validator: LoginValidators.email,
+      validator: EditProductValidators.supply,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    WidgetRef ref,
+    GlobalKey<FormState> formKey, {
+    required TextEditingController productNameController,
+    required ValueNotifier<String> selectedOption,
+    required TextEditingController amountController,
+    required TextEditingController supplyController,
+    required ValueNotifier<bool> isInclusion,
+    required ValueNotifier<File?> selectedImage,
+    required ValueNotifier<List<ProductSizes>?> productSizes,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -338,7 +613,19 @@ class EditProductDialog extends HookWidget {
           child: ElevatedButton.icon(
             icon: Icon(Icons.save),
             onPressed: () {
-              context.pop();
+              if (formKey.currentState!.validate()) {
+                _updateProduct(
+                  context,
+                  ref,
+                  amountController: amountController,
+                  isInclusion: isInclusion,
+                  productNameController: productNameController,
+                  productSizes: productSizes,
+                  selectedImage: selectedImage,
+                  selectedOption: selectedOption,
+                  supplyController: supplyController,
+                );
+              }
             },
             label: Text('Save'),
           ),

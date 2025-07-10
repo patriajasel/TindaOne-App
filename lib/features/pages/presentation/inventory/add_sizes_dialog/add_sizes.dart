@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tinda_one_app/features/pages/domain/product_model.dart';
+import 'package:tinda_one_app/features/pages/presentation/inventory/add_sizes_dialog/validators/add_sizes_validators.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
 class AddSizesDialog extends HookWidget {
-  const AddSizesDialog({super.key});
+  final ValueNotifier<List<ProductSizes>?> productSizes;
+  const AddSizesDialog({super.key, required this.productSizes});
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +23,22 @@ class AddSizesDialog extends HookWidget {
     return Dialog(
       child: Container(
         constraints: BoxConstraints(maxHeight: 350),
-        child: Column(
-          children: [
-            _buildDialogHeader(context),
-            Form(
-              key: formKey,
-              child: _buildSizeForm(
-                context,
-                sizeController: sizeController,
-                supplyController: supplyController,
-                amountController: priceController,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildDialogHeader(context),
+              Form(
+                key: formKey,
+                child: _buildSizeForm(
+                  context,
+                  formKey,
+                  sizeController: sizeController,
+                  supplyController: supplyController,
+                  amountController: priceController,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -64,7 +71,8 @@ class AddSizesDialog extends HookWidget {
   }
 
   Widget _buildSizeForm(
-    BuildContext context, {
+    BuildContext context,
+    GlobalKey<FormState> formKey, {
     required TextEditingController sizeController,
     required TextEditingController supplyController,
     required TextEditingController amountController,
@@ -81,8 +89,14 @@ class AddSizesDialog extends HookWidget {
           const SizedBox(height: 10),
           _buildAmountTextField(context, controller: amountController),
 
-          const SizedBox(height: 30),
-          _buildActionButtons(context),
+          const SizedBox(height: 20),
+          _buildActionButtons(
+            context,
+            formKey,
+            sizeController: sizeController,
+            supplyController: supplyController,
+            amountController: amountController,
+          ),
         ],
       ),
     );
@@ -99,7 +113,7 @@ class AddSizesDialog extends HookWidget {
       ),
       style: context.bodySmall,
       controller: controller,
-      //validator: LoginValidators.email,
+      validator: AddSizesValidators.size,
     );
   }
 
@@ -114,7 +128,9 @@ class AddSizesDialog extends HookWidget {
       ),
       style: context.bodySmall,
       controller: controller,
-      //validator: LoginValidators.email,
+      validator: AddSizesValidators.supply,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: TextInputType.number,
     );
   }
 
@@ -129,11 +145,19 @@ class AddSizesDialog extends HookWidget {
       ),
       style: context.bodySmall,
       controller: controller,
-      //validator: LoginValidators.email,
+      validator: AddSizesValidators.amount,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: TextInputType.number,
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    GlobalKey<FormState> formKey, {
+    required TextEditingController sizeController,
+    required TextEditingController supplyController,
+    required TextEditingController amountController,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -152,13 +176,49 @@ class AddSizesDialog extends HookWidget {
         Expanded(
           child: ElevatedButton.icon(
             icon: Icon(Icons.add),
-            onPressed: () {
-              context.pop();
-            },
             label: Text('Add Size'),
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                _addSizes(
+                  context,
+                  sizeController: sizeController,
+                  amountController: amountController,
+                  supplyController: supplyController,
+                );
+              }
+            },
           ),
         ),
       ],
     );
+  }
+
+  void _addSizes(
+    BuildContext context, {
+    required TextEditingController sizeController,
+    required TextEditingController supplyController,
+    required TextEditingController amountController,
+  }) {
+    // Create a ProductSizes Data
+    final productSizesData = ProductSizes(
+      size: sizeController.text,
+      price: int.parse(amountController.text),
+      supply: int.parse(supplyController.text),
+    );
+
+    // Initialize the list if it's null
+    if (productSizes.value == null) {
+      productSizes.value = <ProductSizes>[];
+    }
+
+    // Create a new list with the existing items plus the new one
+    final updatedList = List<ProductSizes>.from(productSizes.value!)
+      ..add(productSizesData);
+
+    // Update the ValueNotifier with the new list (this triggers rebuild)
+    productSizes.value = updatedList;
+
+    // Pop the dialog
+    context.pop();
   }
 }

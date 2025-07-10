@@ -10,13 +10,12 @@ class ProductModel with _$ProductModel {
   const factory ProductModel({
     required String productId,
     required String name,
-    required String image,
+    String? image,
     required bool isInclusion,
     required String priceType,
-    ProductSizes? productSizes,
+    List<ProductSizes>? productSizes,
     int? price,
     int? supply,
-    String? size,
     String? barCode,
   }) = _ProductModel;
 
@@ -47,7 +46,7 @@ class ProductModelHive extends HiveObject {
   late String name;
 
   @HiveField(2)
-  late String image;
+  String? image;
 
   @HiveField(3)
   late bool isInclusion;
@@ -56,7 +55,7 @@ class ProductModelHive extends HiveObject {
   late String priceType;
 
   @HiveField(5)
-  ProductSizesHive? productSizes;
+  List<ProductSizesHive>? productSizes;
 
   @HiveField(6)
   int? price;
@@ -65,9 +64,6 @@ class ProductModelHive extends HiveObject {
   int? supply;
 
   @HiveField(8)
-  String? size;
-
-  @HiveField(9)
   String? barCode;
 
   ProductModelHive();
@@ -78,27 +74,42 @@ class ProductModelHive extends HiveObject {
     image = model.image;
     isInclusion = model.isInclusion;
     priceType = model.priceType;
-    productSizes = model.productSizes != null
-        ? ProductSizesHive.fromModel(model.productSizes!)
-        : null;
-    price = model.price;
-    supply = model.supply;
-    size = model.size;
-    barCode = model.barCode;
+
+    if (model.priceType == "Fixed Price") {
+      price = model.price;
+      supply = model.supply;
+      barCode = model.barCode;
+      productSizes = null;
+    } else {
+      productSizes = model.productSizes
+          ?.map((productSize) => ProductSizesHive.fromModel(productSize))
+          .toList();
+    }
   }
 
   ProductModel toModel() {
+    if (priceType == "Fixed Price") {
+      return ProductModel(
+        productId: productId,
+        name: name,
+        image: image,
+        isInclusion: isInclusion,
+        priceType: priceType,
+        price: price,
+        supply: supply,
+        barCode: barCode,
+      );
+    }
+
     return ProductModel(
       productId: productId,
       name: name,
       image: image,
       isInclusion: isInclusion,
       priceType: priceType,
-      productSizes: productSizes?.toModel(),
-      price: price,
-      supply: supply,
-      size: size,
-      barCode: barCode,
+      productSizes: productSizes
+          ?.map((productSizeHive) => productSizeHive.toModel())
+          .toList(),
     );
   }
 }

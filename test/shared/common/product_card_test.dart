@@ -7,7 +7,6 @@ void main() {
     const String testProductId = 'test-product-123';
     const String testName = 'Test Product';
     const String testImageUrl = 'https://example.com/test-image.jpg';
-    const List<String> testSizes = ['S', 'M', 'L', 'XL'];
 
     Widget createWidgetUnderTest({required int testSupply}) {
       return MaterialApp(
@@ -16,7 +15,6 @@ void main() {
             productId: testProductId,
             name: testName,
             photo: testImageUrl,
-            sizes: testSizes,
             supply: testSupply,
           ),
         ),
@@ -32,7 +30,7 @@ void main() {
       expect(find.byType(Card), findsOneWidget);
       expect(find.byType(Image), findsOneWidget);
       expect(find.text(testName), findsOneWidget);
-      expect(find.text('In Stock ($testSupply available)'), findsOneWidget);
+      expect(find.text('In Stock ($testSupply)'), findsOneWidget);
     });
 
     testWidgets('should display "In Stock" when supply is greater than 10', (
@@ -46,7 +44,7 @@ void main() {
       expect(find.byType(Card), findsOneWidget);
       expect(find.byType(Image), findsOneWidget);
       expect(find.text(testName), findsOneWidget);
-      expect(find.text('In Stock ($testSupply available)'), findsOneWidget);
+      expect(find.text('In Stock ($testSupply)'), findsOneWidget);
     });
 
     testWidgets('should display "Low Stock" when supply is less than 10', (
@@ -60,7 +58,7 @@ void main() {
       expect(find.byType(Card), findsOneWidget);
       expect(find.byType(Image), findsOneWidget);
       expect(find.text(testName), findsOneWidget);
-      expect(find.text('Low Stock ($testSupply left)'), findsOneWidget);
+      expect(find.text('Low Stock ($testSupply)'), findsOneWidget);
     });
 
     testWidgets('should display "Out of Stock" when supply is less than 0', (

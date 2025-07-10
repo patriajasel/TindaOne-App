@@ -1,11 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
 class ProductCard extends StatelessWidget {
   final String productId;
   final String name;
-  final String photo;
-  final List<String> sizes;
+  final String? photo;
   final int supply;
   final VoidCallback? onTap;
 
@@ -14,7 +15,6 @@ class ProductCard extends StatelessWidget {
     required this.productId,
     required this.name,
     required this.photo,
-    required this.sizes,
     required this.supply,
     this.onTap,
   });
@@ -67,45 +67,45 @@ class ProductCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            Image.network(
-              photo,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                        : null,
+            photo == null
+                ? Image.asset(
+                    'lib/shared/assets/sales_display.png',
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  )
+                : Image.file(
+                    File(photo ?? ''),
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Theme.of(context).colorScheme.tertiary,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image_not_supported_outlined,
+                              size: 32,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Image not available',
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Theme.of(context).colorScheme.tertiary,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.image_not_supported_outlined,
-                        size: 32,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Image not available',
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),  
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
             if (supply == 0)
               Positioned.fill(
                 child: Container(
@@ -163,11 +163,11 @@ class ProductCard extends StatelessWidget {
       stockIcon = Icons.remove_circle_outline;
     } else if (supply <= 10) {
       stockColor = Theme.of(context).colorScheme.secondary;
-      stockText = 'Low Stock ($supply left)';
+      stockText = 'Low Stock ($supply)';
       stockIcon = Icons.warning_amber_outlined;
     } else {
       stockColor = Theme.of(context).colorScheme.primary;
-      stockText = 'In Stock ($supply available)';
+      stockText = 'In Stock ($supply)';
       stockIcon = Icons.check_circle_outline;
     }
 

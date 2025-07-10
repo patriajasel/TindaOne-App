@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:tinda_one_app/features/pages/presentation/inventory/inventory_page.dart';
 
 import '../../../../../helpers/mock_http.dart';
@@ -13,7 +14,7 @@ void main() {
   });
   group('Add Sizes Dialog Widget Tests', () {
     Widget createWidgetUnderTests() {
-      return MaterialApp(home: InventoryPage());
+      return ProviderScope(child: MaterialApp(home: InventoryPage()));
     }
 
     testWidgets('should render all UI components correctly', (tester) async {
