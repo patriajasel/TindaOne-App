@@ -72,13 +72,15 @@ class ViewProductDialog extends ConsumerWidget {
         children: [
           Icon(Icons.sell, color: AppColors.appSecondary),
           const SizedBox(width: 10),
-          Text(
-            product.name,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium!.copyWith(color: AppColors.appPrimary),
+          Expanded(
+            child: Text(
+              product.name,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium!.copyWith(color: AppColors.appPrimary),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          const Spacer(),
           IconButton(
             onPressed: () {
               showModalBottomSheet(
@@ -163,31 +165,45 @@ class ViewProductDialog extends ConsumerWidget {
               children: [
                 Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Size',
-                          style: context.bodySmall?.copyWith(
-                            color: AppColors.appPrimary,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            'Price',
-                            style: context.bodySmall?.copyWith(
-                              color: AppColors.appPrimary,
+                    // Header with better spacing
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Size',
+                              style: context.bodySmall?.copyWith(
+                                color: AppColors.appPrimary,
+                              ),
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                        Text(
-                          'Supply',
-                          style: context.bodySmall?.copyWith(
-                            color: AppColors.appPrimary,
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Price',
+                              style: context.bodySmall?.copyWith(
+                                color: AppColors.appPrimary,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              'Supply',
+                              style: context.bodySmall?.copyWith(
+                                color: AppColors.appPrimary,
+                              ),
+                              textAlign: TextAlign.end,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Divider(),
                     ListView.builder(
@@ -213,33 +229,47 @@ class ViewProductDialog extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Text(sizesData.size, style: context.labelSmall)),
-          SizedBox(
-            width: 80,
+          // Size column - flexible width
+          Expanded(
+            flex: 2,
+            child: Text(
+              sizesData.size,
+              style: context.labelSmall,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          // Price column - flexible width with icon
+          Expanded(
+            flex: 2,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   FontAwesomeIcons.pesoSign,
-                  size: 20,
+                  size: 16,
                   color: AppColors.appSecondary,
                 ),
-                const Spacer(),
-                Text(
-                  sizesData.price.toStringAsFixed(2),
-                  style: context.labelSmall,
-                  textAlign: TextAlign.end,
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    sizesData.price.toStringAsFixed(2),
+                    style: context.labelSmall,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
           ),
+          // Supply column - fixed smaller width
           Expanded(
+            flex: 1,
             child: Text(
               sizesData.supply.toString(),
               style: context.labelSmall,
               textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
