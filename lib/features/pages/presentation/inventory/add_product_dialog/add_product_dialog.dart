@@ -71,8 +71,10 @@ class AddProductDialog extends HookConsumerWidget {
           : int.parse(amountController.text),
       supply: supplyController.text == ''
           ? null
-          : int.parse(amountController.text),
-      productSizes: productSizes.value,
+          : int.parse(supplyController.text),
+      productSizes: selectedOption.value == "Fixed Price"
+          ? null
+          : productSizes.value,
     );
 
     try {

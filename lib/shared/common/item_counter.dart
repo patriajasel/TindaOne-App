@@ -3,7 +3,9 @@ import 'package:tinda_one_app/shared/themes/app_colors.dart';
 
 class ItemCounter extends StatelessWidget {
   final ValueNotifier<int> count;
-  const ItemCounter({super.key, required this.count});
+  final VoidCallback? onCountChanged;
+
+  const ItemCounter({super.key, required this.count, this.onCountChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +16,7 @@ class ItemCounter extends StatelessWidget {
           onPressed: () {
             if (count.value == 0) return;
             count.value -= 1;
+            onCountChanged?.call();
           },
           icon: Icon(Icons.remove, color: AppColors.error),
         ),
@@ -34,6 +37,7 @@ class ItemCounter extends StatelessWidget {
         IconButton(
           onPressed: () {
             count.value += 1;
+            onCountChanged?.call(); // Notify parent of change
           },
           icon: Icon(Icons.add, color: AppColors.success),
         ),

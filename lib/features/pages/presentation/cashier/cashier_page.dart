@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:tinda_one_app/features/pages/application/product_providers.dart';
+import 'package:tinda_one_app/features/pages/domain/order_model.dart';
 import 'package:tinda_one_app/features/pages/domain/product_model.dart';
 import 'package:tinda_one_app/features/pages/presentation/cashier/add_item_dialog/add_item_dialog.dart';
 import 'package:tinda_one_app/features/pages/presentation/cashier/create_order/create_order_dialog.dart';
@@ -9,7 +11,7 @@ import 'package:tinda_one_app/shared/common/item_card.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
 
-class CashierPage extends ConsumerWidget {
+class CashierPage extends HookConsumerWidget {
   const CashierPage({super.key});
 
   @override
@@ -24,12 +26,29 @@ class CashierPage extends ConsumerWidget {
 
     final productAsync = ref.watch(fetchAllProductsProvider);
 
+    final cart = useState<List<OrderItems>>([]);
+
+    useEffect(() {
+      void listener() {
+        print('Cart updated: ${cart.value}');
+      }
+
+      cart.addListener(listener);
+
+      return () => cart.removeListener(listener);
+    }, [cart]);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cashier'),
-        actions: [_buildCartButton(context)],
+        actions: [_buildCartButton(context, cart: cart)],
       ),
-      body: _buildMainContent(context, suggestions, productAsync: productAsync),
+      body: _buildMainContent(
+        context,
+        suggestions,
+        productAsync: productAsync,
+        cart: cart,
+      ),
     );
   }
 
@@ -37,6 +56,7 @@ class CashierPage extends ConsumerWidget {
     BuildContext context,
     List<SearchFieldListItem<dynamic>> suggestions, {
     required AsyncValue<List<ProductModel>> productAsync,
+    required ValueNotifier<List<OrderItems>> cart,
   }) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
@@ -56,7 +76,11 @@ class CashierPage extends ConsumerWidget {
 
           // Product List
           Expanded(
-            child: _buildProductList(context, productAsync: productAsync),
+            child: _buildProductList(
+              context,
+              productAsync: productAsync,
+              cart: cart,
+            ),
           ),
         ],
       ),
@@ -66,6 +90,7 @@ class CashierPage extends ConsumerWidget {
   Widget _buildProductList(
     BuildContext context, {
     required AsyncValue<List<ProductModel>> productAsync,
+    required ValueNotifier<List<OrderItems>> cart,
   }) {
     return productAsync.when(
       data: (products) {
@@ -91,7 +116,8 @@ class CashierPage extends ConsumerWidget {
               supply: product.supply,
               onPressed: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => AddItemDialog(product: product),
+                builder: (context) =>
+                    AddItemDialog(product: product, cart: cart),
               ),
             );
           },
@@ -148,7 +174,10 @@ class CashierPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCartButton(BuildContext context) {
+  Widget _buildCartButton(
+    BuildContext context, {
+    required ValueNotifier<List<OrderItems>> cart,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
@@ -176,8 +205,8 @@ class CashierPage extends ConsumerWidget {
                 color: Colors.red,
                 shape: BoxShape.circle,
               ),
-              child: const Text(
-                '3',
+              child: Text(
+                cart.value.length.toString(),
                 style: TextStyle(fontSize: 12, color: Colors.white),
               ),
             ),

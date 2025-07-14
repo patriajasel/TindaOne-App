@@ -112,9 +112,7 @@ class CreateOrderDialog extends HookWidget {
               child: Center(
                 child: Text(
                   'S',
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.displaySmall,
                 ),
               ),
             ),
@@ -127,12 +125,7 @@ class CreateOrderDialog extends HookWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(FontAwesomeIcons.pesoSign),
-                  Text(
-                    '500',
-                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('500', style: Theme.of(context).textTheme.displaySmall),
                 ],
               ),
             ),

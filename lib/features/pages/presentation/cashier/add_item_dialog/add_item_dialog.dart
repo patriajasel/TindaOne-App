@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tinda_one_app/features/pages/domain/order_model.dart';
 import 'package:tinda_one_app/features/pages/domain/product_model.dart';
 import 'package:tinda_one_app/shared/common/item_counter.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 
 class AddItemDialog extends HookWidget {
   final ProductModel product;
-
-  const AddItemDialog({super.key, required this.product});
+  final ValueNotifier<List<OrderItems>> cart;
+  const AddItemDialog({super.key, required this.product, required this.cart});
 
   @override
   Widget build(BuildContext context) {
     final selectedSizes = useState<List<ProductSizes>>([]);
+
     // Map to store individual counts for each size
     final sizeCounts = useState<Map<ProductSizes, int>>({});
     final itemCount = useState<int>(1);
@@ -48,7 +50,12 @@ class AddItemDialog extends HookWidget {
 
             const SizedBox(height: 10),
 
-            _buildActionButtons(context),
+            _buildActionButtons(
+              context,
+              sizeCounts: sizeCounts,
+              itemCount: itemCount,
+              selectedSizes: selectedSizes,
+            ),
           ],
 
           if (product.productSizes != null)
@@ -76,7 +83,12 @@ class AddItemDialog extends HookWidget {
 
               const SizedBox(height: 10),
 
-              _buildActionButtons(context),
+              _buildActionButtons(
+                context,
+                sizeCounts: sizeCounts,
+                itemCount: itemCount,
+                selectedSizes: selectedSizes,
+              ),
             ],
         ],
       ),
@@ -121,7 +133,12 @@ class AddItemDialog extends HookWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(
+    BuildContext context, {
+    required ValueNotifier<List<ProductSizes>> selectedSizes,
+    required ValueNotifier<Map<ProductSizes, int>> sizeCounts,
+    required ValueNotifier<int> itemCount,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
@@ -131,9 +148,7 @@ class AddItemDialog extends HookWidget {
               style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(AppColors.appSecondary),
               ),
-              onPressed: () {
-                context.pop();
-              },
+              onPressed: () => context.pop(),
               icon: Icon(Icons.cancel, color: AppColors.lightBackground),
               label: Text('Cancel'),
             ),
@@ -142,9 +157,12 @@ class AddItemDialog extends HookWidget {
           Expanded(
             child: ElevatedButton.icon(
               icon: Icon(Icons.shopping_cart_checkout),
-              onPressed: () {
-                context.pop();
-              },
+              onPressed: () => _addItemsToCart(
+                context,
+                sizeCounts: sizeCounts,
+                itemCount: itemCount,
+                selectedSizes: selectedSizes,
+              ),
               label: Text('Add to Cart'),
             ),
           ),
@@ -210,7 +228,15 @@ class AddItemDialog extends HookWidget {
                 // Item Counter
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: ItemCounter(count: countNotifier),
+                  child: ItemCounter(
+                    count: countNotifier,
+                    onCountChanged: () {
+                      sizeCounts.value = {
+                        ...sizeCounts.value,
+                        size: countNotifier.value,
+                      };
+                    },
+                  ),
                 ),
               ],
             ),
@@ -276,7 +302,7 @@ class AddItemDialog extends HookWidget {
               return ChoiceChip(
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 visualDensity: VisualDensity.compact,
-                
+
                 label: Text(size!.size),
                 selected: selectedSizes.value.contains(size),
                 onSelected: (bool selected) {
@@ -304,5 +330,46 @@ class AddItemDialog extends HookWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _addItemsToCart(
+    BuildContext context, {
+    required ValueNotifier<List<ProductSizes>> selectedSizes,
+    required ValueNotifier<Map<ProductSizes, int>> sizeCounts,
+    required ValueNotifier<int> itemCount,
+  }) async {
+    final List<OrderItems> orderItems = [];
+    List<ItemList>? itemList = [];
+
+    if (cart.value.isNotEmpty) {
+      orderItems.addAll(cart.value);
+    }
+
+    // Create an Item List Object;
+    if (selectedSizes.value.isNotEmpty) {
+      for (var sizes in selectedSizes.value) {
+        final item = ItemList(
+          size: sizes.size,
+          price: sizes.price,
+          quantity: sizeCounts.value[sizes] ?? 0,
+        );
+        itemList.add(item);
+      }
+    }
+
+    // Create a Order Item object
+    final orderItem = OrderItems(
+      productId: product.productId,
+      name: product.name,
+      itemList: itemList,
+      price: itemList.isEmpty ? product.price : null,
+      quantity: itemList.isEmpty ? itemCount.value : null,
+    );
+
+    orderItems.add(orderItem);
+
+    cart.value = orderItems;
+
+    context.pop();
   }
 }
