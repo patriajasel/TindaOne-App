@@ -28,16 +28,6 @@ class CashierPage extends HookConsumerWidget {
 
     final cart = useState<List<OrderItems>>([]);
 
-    useEffect(() {
-      void listener() {
-        print('Cart updated: ${cart.value}');
-      }
-
-      cart.addListener(listener);
-
-      return () => cart.removeListener(listener);
-    }, [cart]);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cashier'),
@@ -192,7 +182,7 @@ class CashierPage extends HookConsumerWidget {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                builder: (context) => CreateOrderDialog(),
+                builder: (context) => CreateOrderDialog(cartItems: cart),
               );
             },
           ),

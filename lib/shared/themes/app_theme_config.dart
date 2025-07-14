@@ -175,7 +175,15 @@ class AppThemeConfig {
     // Elevated Button Themes
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(AppColors.appPrimary),
+        backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return AppColors.appPrimary.withValues(alpha: 0.5);
+          }
+          if (states.contains(WidgetState.pressed)) {
+            return AppColors.appPrimary.withValues(alpha: 0.8);
+          }
+          return AppColors.appPrimary;
+        }),
         foregroundColor: WidgetStatePropertyAll(AppColors.darkPrimary),
         iconColor: WidgetStatePropertyAll(AppColors.appSecondary),
         textStyle: WidgetStatePropertyAll(GoogleFonts.poppins(fontSize: 12)),
