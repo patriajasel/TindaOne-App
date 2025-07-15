@@ -35,6 +35,15 @@ class ProductRepository {
     return _hiveService.productBox.get(productId)?.toModel();
   }
 
+  /// Fetch all inclusion product
+  List<ProductModel> getAllInclusionProduct() {
+    return _hiveService.productBox.values
+        .map((productModel) => productModel.toModel())
+        .toList()
+        .where((product) => product.isInclusion == true)
+        .toList();
+  }
+
   /// Update a product
   Future<void> update(ProductModel product, File? imageFile) async {
     String imageDir = imageFile?.path ?? '';

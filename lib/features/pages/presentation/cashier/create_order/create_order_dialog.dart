@@ -121,8 +121,9 @@ class CreateOrderDialog extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final discountController = useTextEditingController();
-
     useListenable(discountController);
+
+    final orderInclusions = useState<List<OrderInclusion>>([]);
 
     return ConstrainedBox(
       constraints: BoxConstraints(
@@ -138,7 +139,7 @@ class CreateOrderDialog extends HookWidget {
             _buildItemList(context),
 
             const SizedBox(height: 10),
-            _buildInclusionOption(context),
+            _buildInclusionOption(context, orderInclusions: orderInclusions),
 
             const SizedBox(height: 10),
             _buildDiscountSection(context, controller: discountController),
@@ -344,7 +345,10 @@ class CreateOrderDialog extends HookWidget {
     );
   }
 
-  Widget _buildInclusionOption(BuildContext context) {
+  Widget _buildInclusionOption(
+    BuildContext context, {
+    required ValueNotifier<List<OrderInclusion>> orderInclusions,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: ValueListenableBuilder<List<OrderItems>>(
@@ -366,11 +370,21 @@ class CreateOrderDialog extends HookWidget {
                       : () {
                           showDialog(
                             context: context,
-                            builder: (context) => InclusionDialog(),
+                            builder: (context) => InclusionDialog(
+                              orderInclusions: orderInclusions,
+                            ),
                           );
                         },
-                  icon: Icon(Icons.add),
-                  label: Text('Add Item'),
+                  icon: Icon(
+                    orderInclusions.value.isNotEmpty
+                        ? Icons.visibility
+                        : Icons.add,
+                  ),
+                  label: Text(
+                    orderInclusions.value.isNotEmpty
+                        ? 'View Items'
+                        : 'Add Items',
+                  ),
                 ),
               ),
             ],

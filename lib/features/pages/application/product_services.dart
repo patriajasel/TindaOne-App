@@ -18,6 +18,11 @@ class ProductServices {
     return _productRepository.get(productId);
   }
 
+  // Fetch all inclusion products
+  Future<List<ProductModel>> fetchAllInclusionProducts() async {
+    return _productRepository.getAllInclusionProduct();
+  }
+
   // Create a product
   Future<void> createProduct(ProductModel product, File? imageFile) async {
     return _productRepository.add(product, imageFile);

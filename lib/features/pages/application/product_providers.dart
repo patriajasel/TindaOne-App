@@ -43,6 +43,11 @@ Future<ProductModel?> fetchProduct(Ref ref, {required String productId}) async {
 }
 
 @riverpod
+Future<List<ProductModel>> fetchAllInclusionProduct(Ref ref) async {
+  return await ref.watch(productServicesProvider).fetchAllInclusionProducts();
+}
+
+@riverpod
 Future<void> updateProduct(
   Ref ref, {
   required ProductModel product,

@@ -358,6 +358,26 @@ class _FetchProductProviderElement
   String get productId => (origin as FetchProductProvider).productId;
 }
 
+String _$fetchAllInclusionProductHash() =>
+    r'b3ea86b623e0ddc652e83e4a564793f51fce693d';
+
+/// See also [fetchAllInclusionProduct].
+@ProviderFor(fetchAllInclusionProduct)
+final fetchAllInclusionProductProvider =
+    AutoDisposeFutureProvider<List<ProductModel>>.internal(
+  fetchAllInclusionProduct,
+  name: r'fetchAllInclusionProductProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fetchAllInclusionProductHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FetchAllInclusionProductRef
+    = AutoDisposeFutureProviderRef<List<ProductModel>>;
 String _$updateProductHash() => r'17bd67b588ac9ebd4f664c00048780663d8689d1';
 
 /// See also [updateProduct].
