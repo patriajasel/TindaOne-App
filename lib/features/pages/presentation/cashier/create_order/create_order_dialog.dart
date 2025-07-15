@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:tinda_one_app/features/pages/application/order_providers.dart';
 import 'package:tinda_one_app/features/pages/domain/order_model.dart';
 import 'package:tinda_one_app/features/pages/presentation/cashier/inclusion_dialog/inclusion_dialog.dart';
 import 'package:tinda_one_app/shared/common/item_counter.dart';
 import 'package:tinda_one_app/shared/themes/app_colors.dart';
 import 'package:tinda_one_app/shared/themes/app_theme_config.dart';
+import 'package:uuid/uuid.dart';
 
-class CreateOrderDialog extends HookWidget {
+class CreateOrderDialog extends HookConsumerWidget {
   final ValueNotifier<List<OrderItems>> cartItems;
   const CreateOrderDialog({super.key, required this.cartItems});
 
@@ -118,8 +122,59 @@ class CreateOrderDialog extends HookWidget {
     return totalAmount - discountAmount;
   }
 
+  Future<void> _createOrder(
+    BuildContext context,
+    WidgetRef ref, {
+    required List<OrderItems> orderItems,
+    required int totalAmount,
+    required int discountAmount,
+    required List<OrderInclusion> orderInclusion,
+  }) async {
+    // Create Order ID
+    final orderId = Uuid().v4();
+
+    // Date Time now
+    final now = DateTime.now();
+
+    // Create Order Model
+    final orderData = OrderModel(
+      orderId: orderId,
+      date: now,
+      items: orderItems,
+      totalAmount: totalAmount,
+      discount: discountAmount,
+      inclusion: orderInclusion,
+    );
+
+    try {
+      await ref.read(createOrderProvider(order: orderData).future);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Order created successfully'),
+            backgroundColor: AppColors.appTertiary,
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        context.push('/checkout-page');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create order: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final discountController = useTextEditingController();
     useListenable(discountController);
 
@@ -148,7 +203,13 @@ class CreateOrderDialog extends HookWidget {
             _buildTotalAmount(context, discountController: discountController),
 
             const SizedBox(height: 20),
-            _buildActionButtons(context),
+            _buildActionButtons(
+              context,
+              ref,
+              orderItems: cartItems,
+              orderInclusion: orderInclusions,
+              discountAmount: int.parse(discountController.text),
+            ),
 
             const SizedBox(height: 20),
           ],
@@ -466,7 +527,13 @@ class CreateOrderDialog extends HookWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    WidgetRef ref, {
+    required ValueNotifier<List<OrderItems>> orderItems,
+    required ValueNotifier<List<OrderInclusion>> orderInclusion,
+    required int discountAmount,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: ValueListenableBuilder<List<OrderItems>>(
@@ -494,9 +561,16 @@ class CreateOrderDialog extends HookWidget {
                   icon: Icon(Icons.shopping_cart_checkout),
                   onPressed: cartItems.value.isEmpty
                       ? null
-                      : () {
-                          context.push('/checkout-page');
-                        },
+                      : () async => _createOrder(
+                          context,
+                          ref,
+                          orderItems: orderItems.value,
+                          orderInclusion: orderInclusion.value,
+                          discountAmount: discountAmount,
+                          totalAmount: _getTotalCartAmount(
+                            discountAmount: discountAmount,
+                          ),
+                        ),
                   label: Text('Go to Checkout'),
                 ),
               ),
