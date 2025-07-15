@@ -96,7 +96,7 @@ class CreateOrderDialog extends HookWidget {
     }
   }
 
-  int _getTotalCartAmount() {
+  int _getTotalCartAmount({required int discountAmount}) {
     int totalAmount = 0;
 
     for (var cartItem in cartItems.value) {
@@ -115,15 +115,22 @@ class CreateOrderDialog extends HookWidget {
       }
     }
 
-    return totalAmount;
+    return totalAmount - discountAmount;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      heightFactor: 0.8,
+    final discountController = useTextEditingController();
+
+    useListenable(discountController);
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.8,
+      ),
       child: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildDialogHeader(context),
@@ -134,10 +141,10 @@ class CreateOrderDialog extends HookWidget {
             _buildInclusionOption(context),
 
             const SizedBox(height: 10),
-            _buildDiscountSection(context),
+            _buildDiscountSection(context, controller: discountController),
 
             const SizedBox(height: 20),
-            _buildTotalAmount(context),
+            _buildTotalAmount(context, discountController: discountController),
 
             const SizedBox(height: 20),
             _buildActionButtons(context),
@@ -373,7 +380,10 @@ class CreateOrderDialog extends HookWidget {
     );
   }
 
-  Widget _buildDiscountSection(BuildContext context) {
+  Widget _buildDiscountSection(
+    BuildContext context, {
+    required TextEditingController controller,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
@@ -385,7 +395,9 @@ class CreateOrderDialog extends HookWidget {
           Expanded(
             child: TextField(
               style: context.bodyMedium,
+              controller: controller,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              keyboardType: TextInputType.number,
               textAlign: TextAlign.end,
             ),
           ),
@@ -394,7 +406,14 @@ class CreateOrderDialog extends HookWidget {
     );
   }
 
-  Widget _buildTotalAmount(BuildContext context) {
+  Widget _buildTotalAmount(
+    BuildContext context, {
+    required TextEditingController discountController,
+  }) {
+    final discountAmount = int.parse(
+      discountController.text == '' ? '0' : discountController.text,
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: ValueListenableBuilder<List<OrderItems>>(
@@ -417,7 +436,9 @@ class CreateOrderDialog extends HookWidget {
                     color: AppColors.appSecondary,
                   ),
                   Text(
-                    _getTotalCartAmount().toStringAsFixed(2),
+                    _getTotalCartAmount(
+                      discountAmount: discountAmount,
+                    ).toStringAsFixed(2),
                     style: Theme.of(context).textTheme.displaySmall!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
